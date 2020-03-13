@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const fetch = require('node-fetch');
 const axios = require('axios');
 
 
@@ -12,9 +11,8 @@ const BASE = "https://www.alphavantage.co/query";
 const PORT = process.env.PORT || 5000;
 
 // replace with homepage
-app.get('/', (req, res) => {
-    res.status(200);
-    res.send("You are on the homepage!");
+app.get('*', (req,res) =>{
+    res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
 
