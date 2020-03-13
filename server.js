@@ -15,6 +15,9 @@ app.get('*', (req,res) =>{
     res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
+// static...what does it do?
+app.use('/static', express.static(path.join(__dirname, 'client/build')));
+
 
 // client receives JSON object from server and displays it
 // server serves client-side scripts and APIs
