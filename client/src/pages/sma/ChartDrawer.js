@@ -15,7 +15,7 @@ class ChartDrawer extends Component {
                 var chart = this.chart;
                 var name = this.props[0];
                 console.log(this.props[0]);
-                fetch('https://www.alphavantage.co/query?function=SMA&symbol='+this.props[0]+'&interval=daily&time_period=100&series_type=open&apikey=UJY4LTGINDIZ9R3S')
+                fetch('/api/sma/' + this.props[0])
                 .then(function(response) {
                 
                     return response.json();
@@ -96,7 +96,7 @@ class ChartDrawer extends Component {
        
 
 		return (
-		<div>
+        <div>
 			<CanvasJSChart options = {options}
 				 onRef={ref => this.chart = ref}
 			/>

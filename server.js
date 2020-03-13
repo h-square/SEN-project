@@ -60,5 +60,17 @@ app.get('/api/prices_monthly/:symbol', (req, res) => {
         });
 });
 
+app.get('/api/sma/:symbol', (req, res) => {
+    symbol = req.params.symbol;
+
+    axios.get(BASE + `?function=SMA&symbol=${symbol}&interval=weekly&time_period=10&series_type=open&apikey=${KEY}`)
+        .then(res_av => {
+            res.send(res_av.data);
+        })
+        .catch(err => {
+            res.json({status: "SERVER_ERROR OR BAD_REQUEST"});
+        });
+});
+
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}...`));
