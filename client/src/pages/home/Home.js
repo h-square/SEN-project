@@ -10,7 +10,7 @@ class Home extends Component {
       {/* Link to List.js */}
       <Link to={'./sma'}>
         <button variant="raised">
-            SMA
+            Technical Indicators
         </button>
       </Link>
     </div>

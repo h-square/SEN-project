@@ -4,41 +4,46 @@ var React = require('react');
 var Component = React.Component;
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-var dataPoints = [];
+var dataPoints =[];
+var chart;
+
+CanvasJS.addColorSet("colors",["#0000FF","#DC143C","#7FFF00","#FF69B4","#006400"])
+
 class ChartDrawer extends Component {
     
     handleChange = (e) =>{
             console.log(e.target.checked)
             if(e.target.checked)
             {
-                console.log(e.target.value);
-                var chart = this.chart;
+                console.log(e.target.id);
+                chart = this.chart;
                 var name = this.props[0];
                 console.log(this.props[0]);
-                fetch('/api/sma/' + this.props[0])
-                .then(function(response) {
+                var indicator = e.target.id.split(" ");
                 
+                fetch('https://www.alphavantage.co/query?function='+indicator[0]+'&symbol='+this.props[0]+'&interval=daily&time_period='+indicator[1]+'&series_type=open&apikey=UJY4LTGINDIZ9R3S')
+                .then(function(response) {
+                    console.log(response.status);
                     return response.json();
                 })
                 .then(function(data2) {
                     chart.options.title.text = name; 
                     let properties = {
                         type: "line",
-                        color: "red",
-                        name: "SMA",
+                        name: indicator[0]+" "+indicator[1],
                         showInLegend: true,
                         yValueFormatString: "$##0.00",
                         xValueType: "dateTime",
                         dataPoints: []
                     }
-                    for(let i in data2["Technical Analysis: SMA"]){  
+                    for(let i in data2["Technical Analysis: "+indicator[0]]){  
                         let xx = [];
                         xx.push(i.split(' ')[0].split('-'))
                     
                         properties.dataPoints.push({
                             
                             x: new Date(xx[0][0],xx[0][1],xx[0][2]),
-                            y: parseFloat(data2['Technical Analysis: SMA'][i]['SMA'])
+                            y: parseFloat(data2['Technical Analysis: '+indicator[0]][i][indicator[0]])
                         })
                     }
                     chart.addTo("data",properties);
@@ -47,12 +52,12 @@ class ChartDrawer extends Component {
             }
             else
             {
-                var chart = this.chart;
+                chart = this.chart;
                 var idx=0;
                 for(let i in chart.options.data)
                 {
                     console.log(i)  
-                    if(chart.options.data[idx].name=="SMA")
+                    if(chart.options.data[idx].name===e.target.id)
                     {
                         chart.options.data.splice(idx,1);
                         break;
@@ -62,12 +67,15 @@ class ChartDrawer extends Component {
                 chart.render();
             }
         }
+        
+    
 
 	render() {
 		    var options = {
 			exportEnabled: true,
 			zoomEnabled: true,
-			animationEnabled: true,
+            animationEnabled: true,
+            colorSet: "colors",
 			title: {
 				text: "",
 				fontFamily: "calibri"
@@ -84,7 +92,6 @@ class ChartDrawer extends Component {
 			},
 			data: [{
                 type: "line",
-                color: "blue",
 				name: "",
 				showInLegend: true,
 				yValueFormatString: "$##0.00",
@@ -96,13 +103,22 @@ class ChartDrawer extends Component {
        
 
 		return (
-        <div>
+		<div>
 			<CanvasJSChart options = {options}
 				 onRef={ref => this.chart = ref}
 			/>
             <form>
                 <label>
-                    <input type="checkbox" onChange={this.handleChange} id="SMA 10"/>SMA 10
+                    <input type="checkbox" onChange={this.handleChange} id="SMA 100"/>SMA 100
+                </label>
+                <label>
+                    <input type="checkbox" onChange={this.handleChange} id="SMA 50"/>SMA 50
+                </label>
+                <label>
+                    <input type="checkbox" onChange={this.handleChange} id="EMA 100"/>EMA 100
+                </label>
+                <label>
+                    <input type="checkbox" onChange={this.handleChange} id="EMA 50"/>EMA 50
                 </label>
             </form>
 			{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
@@ -137,7 +153,7 @@ class ChartDrawer extends Component {
 
 
     componentDidUpdate(prevProp){
-        if(prevProp[0]!=this.props[0]   )
+        if(prevProp[0]!==this.props[0]   )
         {
             document.getElementById("SMA 10").checked = false;
             this.chart.options.data = [];
@@ -147,7 +163,6 @@ class ChartDrawer extends Component {
             var chart = this.chart;
             let properties = {
                 type: "line",
-                color: "blue",
                 name: this.props[0],
                 showInLegend: true,
                 yValueFormatString: "$##0.00",
