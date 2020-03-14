@@ -25,18 +25,19 @@ app.use('/static', express.static(path.join(__dirname, 'client/build')));
 // example
 // use this API to get data on the client side
 // and display charts
-app.get('/api/prices_monthly/:symbol', (req, res) => {
+app.get('/api/prices/:symbol', (req, res) => {
     symbol = req.params.symbol;
 
+    let url = BASE + `?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${KEY}`
     // fetch the data from the database but since
     // we don't have one right now we use alphavantage
-    axios.get(BASE + `?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${KEY}`)
+    axios.get(url)
         .then(res_av => {
             // extract the data
             data = res_av.data;
-            if( !('Monthly Time Series' in data))
+            if( !('Time Series (Daily)' in data))
                 throw 'BAD_REQUEST';
-            data = data['Monthly Time Series'];
+            data = data['Time Series (Daily)'];
             
             const timestamp = [];
             const prices = [];
@@ -46,7 +47,7 @@ app.get('/api/prices_monthly/:symbol', (req, res) => {
             // the client can generate a simple plot locally
             Object.keys(data).forEach(date => {
                 timestamp.push(date);
-                prices.push(parseInt(data[date]['1. open']));
+                prices.push(parseFloat(data[date]['1. open']));
             });
 
             // send the proper response
@@ -61,12 +62,26 @@ app.get('/api/prices_monthly/:symbol', (req, res) => {
         });
 });
 
-app.get('/api/sma/:symbol', (req, res) => {
+app.get('/api/indicators/SMA/:symbol-:period', (req, res) => {
     symbol = req.params.symbol;
+    period = req.params.period;
+    let url = BASE + `?function=sma&symbol=${symbol}&interval=daily&time_period=${period}&series_type=open&apikey=${KEY}`;
 
-    axios.get(BASE + `?function=SMA&symbol=${symbol}&interval=weekly&time_period=10&series_type=open&apikey=${KEY}`)
+    axios.get(url)
         .then(res_av => {
-            res.send(res_av.data);
+            data = res_av.data;
+            if( !('Technical Analysis: SMA' in data))
+                throw 'BAD_REQUEST';
+            data = data['Technical Analysis: SMA'];
+            
+            const timestamp = [];
+            const sma_data = [];
+            Object.keys(data).forEach(date => {
+                timestamp.push(date);
+                sma_data.push(parseFloat(data[date]['SMA']));
+            });
+            //console.log(timestamp, sma_data);
+            res.json({status: "OK", timestamp, sma_data});
         })
         .catch(err => {
             res.json({status: "SERVER_ERROR OR BAD_REQUEST"});

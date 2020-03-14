@@ -21,7 +21,7 @@ class ChartDrawer extends Component {
                 console.log(this.props[0]);
                 var indicator = e.target.id.split(" ");
                 
-                fetch('https://www.alphavantage.co/query?function='+indicator[0]+'&symbol='+this.props[0]+'&interval=daily&time_period='+indicator[1]+'&series_type=open&apikey=UJY4LTGINDIZ9R3S')
+                fetch(`/api/indicators/${indicator[0]}/${name}-${indicator[1]}`)
                 .then(function(response) {
                     console.log(response.status);
                     return response.json();
@@ -36,15 +36,17 @@ class ChartDrawer extends Component {
                         xValueType: "dateTime",
                         dataPoints: []
                     }
-                    for(let i in data2["Technical Analysis: "+indicator[0]]){  
-                        let xx = [];
-                        xx.push(i.split(' ')[0].split('-'))
-                    
+                    let timestamp = data2['timestamp'];
+                    let sma_data = data2['sma_data'];
+                    for(let i=0; i<timestamp.length; i++)
+                    {
+                        let date_nums = timestamp[i].split('-');
+                        //console.log(date_nums);
                         properties.dataPoints.push({
                             
-                            x: new Date(xx[0][0],xx[0][1],xx[0][2]),
-                            y: parseFloat(data2['Technical Analysis: '+indicator[0]][i][indicator[0]])
-                        })
+                            x: new Date(date_nums[0], date_nums[1], date_nums[2]),
+                            y: sma_data[i]
+                        });
                     }
                     chart.addTo("data",properties);
                     chart.render(); 
@@ -131,21 +133,30 @@ class ChartDrawer extends Component {
         var chart = this.chart;
         var name = this.props[0];
         console.log(this.props[0]);
-		fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+this.props[0]+'&outputsize=full&apikey=UJY4LTGINDIZ9R3S')
+
+
+
+		fetch(`/api/prices/${name}`)
 		.then(function(response) {
 			return response.json();
 		})
 		.then(function(data) {
             chart.options.title.text = name;
-            chart.options.data[0].name = "price";   
-			for(let i in data['Time Series (Daily)']){  
-				let xx = [];
-				xx.push(i.split('-'))
-				chart.options.data[0].dataPoints.push({
-					x: new Date(xx[0][0],xx[0][1],xx[0][2]),
-					y: parseFloat(data['Time Series (Daily)'][i]['1. open'])
+            chart.options.data[0].name = "price";
+            
+            let timestamp = data['timestamp'];
+            let prices = data['prices'];
+
+            for(let i=0; i<timestamp.length; i++)
+            {
+                let date_nums = timestamp[i].split('-');
+                chart.options.data[0].dataPoints.push({
+					x: new Date(date_nums[0], date_nums[1], date_nums[2]),
+					y: prices[i]
 				})
-			}
+            }
+
+			
 			chart.options.data[0].dataPoints.reverse();
 			chart.render(); 
 		});
