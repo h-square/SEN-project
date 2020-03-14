@@ -11,7 +11,7 @@ const BASE = "https://www.alphavantage.co/query";
 const PORT = process.env.PORT || 5000;
 
 // replace with homepage
-app.get('*', (req,res) =>{
+app.get('/', (req,res) =>{
     res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
