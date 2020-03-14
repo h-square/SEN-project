@@ -75,13 +75,39 @@ app.get('/api/indicators/SMA/:symbol-:period', (req, res) => {
             data = data['Technical Analysis: SMA'];
             
             const timestamp = [];
-            const sma_data = [];
+            const analysis_data = [];
             Object.keys(data).forEach(date => {
                 timestamp.push(date);
-                sma_data.push(parseFloat(data[date]['SMA']));
+                analysis_data.push(parseFloat(data[date]['SMA']));
             });
             //console.log(timestamp, sma_data);
-            res.json({status: "OK", timestamp, sma_data});
+            res.json({status: "OK", timestamp, analysis_data});
+        })
+        .catch(err => {
+            res.json({status: "SERVER_ERROR OR BAD_REQUEST"});
+        });
+});
+
+app.get('/api/indicators/EMA/:symbol-:period', (req, res) => {
+    symbol = req.params.symbol;
+    period = req.params.period;
+    let url = BASE + `?function=ema&symbol=${symbol}&interval=daily&time_period=${period}&series_type=open&apikey=${KEY}`;
+
+    axios.get(url)
+        .then(res_av => {
+            data = res_av.data;
+            if( !('Technical Analysis: EMA' in data))
+                throw 'BAD_REQUEST';
+            data = data['Technical Analysis: EMA'];
+            
+            const timestamp = [];
+            const analysis_data = [];
+            Object.keys(data).forEach(date => {
+                timestamp.push(date);
+                analysis_data.push(parseFloat(data[date]['EMA']));
+            });
+            //console.log(timestamp, sma_data);
+            res.json({status: "OK", timestamp, analysis_data});
         })
         .catch(err => {
             res.json({status: "SERVER_ERROR OR BAD_REQUEST"});

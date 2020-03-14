@@ -27,6 +27,7 @@ class ChartDrawer extends Component {
                     return response.json();
                 })
                 .then(function(data2) {
+                    console.log(data2);
                     chart.options.title.text = name; 
                     let properties = {
                         type: "line",
@@ -37,7 +38,7 @@ class ChartDrawer extends Component {
                         dataPoints: []
                     }
                     let timestamp = data2['timestamp'];
-                    let sma_data = data2['sma_data'];
+                    let analysis_data = data2['analysis_data'];
                     for(let i=0; i<timestamp.length; i++)
                     {
                         let date_nums = timestamp[i].split('-');
@@ -45,7 +46,7 @@ class ChartDrawer extends Component {
                         properties.dataPoints.push({
                             
                             x: new Date(date_nums[0], date_nums[1], date_nums[2]),
-                            y: sma_data[i]
+                            y: analysis_data[i]
                         });
                     }
                     chart.addTo("data",properties);
