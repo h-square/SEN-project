@@ -168,7 +168,10 @@ class ChartDrawer extends Component {
     componentDidUpdate(prevProp){
         if(prevProp[0]!==this.props[0]   )
         {
-            document.getElementById("SMA 10").checked = false;
+            document.getElementById("SMA 100").checked = false;
+            document.getElementById("SMA 50").checked = false;
+            document.getElementById("EMA 100").checked = false;
+            document.getElementById("EMA 50").checked = false;
             this.chart.options.data = [];
             this.chart.options.data.name = this.props[0];
             this.chart.options.title.text = this.props[0];
@@ -182,18 +185,22 @@ class ChartDrawer extends Component {
                 xValueType: "dateTime",
                 dataPoints: []
             }
-            fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+this.props[0]+'&outputsize=full&apikey=UJY4LTGINDIZ9R3S')
+            fetch(`/api/prices/${this.props[0]}`)
             .then(function(response) {
                 return response.json();
             })
             .then(function(data) {
-                for(let i in data['Time Series (Daily)']){  
-                    let xx = [];
-                    xx.push(i.split('-'))
+                let timestamp = data['timestamp'];
+                let analysis_data = data['prices'];
+                for(let i=0; i<timestamp.length; i++)
+                {
+                    let date_nums = timestamp[i].split('-');
+                    //console.log(date_nums);
                     properties.dataPoints.push({
-                        x: new Date(xx[0][0],xx[0][1],xx[0][2]),
-                        y: parseFloat(data['Time Series (Daily)'][i]['1. open'])
-                    })
+                        
+                        x: new Date(date_nums[0], date_nums[1], date_nums[2]),
+                        y: analysis_data[i]
+                    });
                 }
                 dataPoints.reverse();
                 chart.addTo("data",properties);
