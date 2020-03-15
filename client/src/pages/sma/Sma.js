@@ -8,7 +8,7 @@ class Sma extends Component{
 				<center><h1>SMAP</h1></center>
 				<SearchStock />
 			</div>
-		);
+		)
 	}
 }
 

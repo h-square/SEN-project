@@ -160,7 +160,8 @@ class ChartDrawer extends Component {
 			
 			chart.options.data[0].dataPoints.reverse();
 			chart.render(); 
-		});
+        })
+        .catch(err => console.log(err));
     }
 
 
