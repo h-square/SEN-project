@@ -11,13 +11,13 @@ router.get('/:symbol-:period', (req, res) => {
     
     if(config.use_av || !config.use_atlas)
     {
-        let url = `https://www.alphavantage.co/query?\
-            function=sma\
-            &symbol=${symbol}\
-            &interval=daily\
-            &time_period=${period}\
-            &series_type=open\
-            &apikey=${config.av_key}`;
+        let url = `https://www.alphavantage.co/query?`+
+            `function=sma`+
+            `&symbol=${symbol}`+
+            `&interval=daily`+
+            `&time_period=${period}`+
+            `&series_type=open`+
+            `&apikey=${config.av_key}`;
         
         axios.get(url)
             .then(res_av => {

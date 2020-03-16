@@ -10,11 +10,11 @@ router.get('/:symbol', (req, res) => {
 
     if(config.use_av || !config.use_atlas)
     {
-        let url = `https://www.alphavantage.co/query?\
-            function=TIME_SERIES_DAILY\
-            &symbol=${symbol}\
-            &outputsize=full\
-            &apikey=${config.av_key}`;
+        let url = `https://www.alphavantage.co/query?`+
+            `function=TIME_SERIES_DAILY`+
+            `&symbol=${symbol}`+
+            `&outputsize=full`+
+            `&apikey=${config.av_key}`;
         // fetch the data from the database but since
         // we don't have one right now we use alphavantage
         axios.get(url)
