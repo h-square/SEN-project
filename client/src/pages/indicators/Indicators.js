@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import SearchStock from './SearchStock';
 
-class Sma extends Component{
+class Indicators extends Component{
 	render(){
 		return(
 			<div>
@@ -12,4 +12,4 @@ class Sma extends Component{
 	}
 }
 
-export default Sma;
+export default Indicators;

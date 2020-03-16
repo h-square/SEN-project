@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Home from './pages/home/Home';
-import Sma from './pages/sma/Sma';
+import Indicators from './pages/indicators/Indicators';
 
 class App extends Component {
   render() {
@@ -10,7 +10,7 @@ class App extends Component {
       <div>
         <Switch>
           <Route exact path='/' component={Home}/>
-          <Route path='/sma' component={Sma}/>
+          <Route path='/indicators' component={Indicators}/>
         </Switch>
       </div>
     )
