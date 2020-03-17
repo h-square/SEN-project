@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 
 const router = express.Router();
 
-router.get('/api/report/:symbol-:year', (req, res) => {
+router.get('/:symbol-:year', (req, res) => {
     const symbol = req.params.symbol;
     const year = parseInt(req.params.year);
 
