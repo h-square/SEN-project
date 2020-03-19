@@ -10,7 +10,8 @@ class Reports extends Component {
       symbol: '',
       year: '',
       showData: false,
-      data: null
+      data: null,
+      error: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,12 +28,23 @@ class Reports extends Component {
     axios.get(`/api/report/${this.state.symbol}-${this.state.year}`)
       .then(res => {
         //console.log(res.data);
-        this.setState({
-          data: res.data,
-          showData: true
-        })
+        if(res.data.status==='OK'){
+          this.setState({
+            data: res.data,
+            showData: true
+          })
+        }
+        else{
+          this.setState({
+            error:true
+          })
+        }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        this.setState({
+          error:true
+        })
+      });
   }
   render() {
 
@@ -232,7 +244,20 @@ class Reports extends Component {
       </div>
     )
      : (
-      <div>Enter valid input!</div>
+      this.state.error?(
+        <div>
+          <h1>Enter valid input!</h1>
+          <h3>Check following details:</h3>
+          <ul>
+            <li>Check whether the company you have entered is valid</li>
+            <li>Check whether the year you have entered is between 2017 to 2019 </li>
+          </ul>
+        </div>
+      ):(
+        <div>
+          <center>Welcome! Access the Annual report by just one click!  </center>
+        </div>
+      )
     )
     /*let dataMarkUp = this.state.data ? (
       //console.log(this.state.data),
