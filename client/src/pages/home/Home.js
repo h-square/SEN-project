@@ -22,6 +22,15 @@ class Home extends Component {
             Option Simulator
         </button>
       </Link>
+
+      <br />
+      <br />
+
+      <Link to={'./reports'}>
+        <button variant="raised">
+            Annual Reports
+        </button>
+      </Link>
     </div>
     );
   }
