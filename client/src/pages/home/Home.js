@@ -7,10 +7,19 @@ class Home extends Component {
     return (
     <div className="App">
       <h1>SMAP Home</h1>
-      {/* Link to List.js */}
+      
       <Link to={'./indicators'}>
         <button variant="raised">
             Technical Indicators
+        </button>
+      </Link>
+      
+      <br />
+      <br />
+
+      <Link to={'./optsim'}>
+        <button variant="raised">
+            Option Simulator
         </button>
       </Link>
     </div>
