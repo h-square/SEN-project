@@ -37,16 +37,20 @@ class ChartDrawer extends Component {
                         xValueType: "dateTime",
                         dataPoints: []
                     }
-                    let timestamp = data2['timestamp'];
-                    let analysis_data = data2['analysis_data'];
-                    for(let i=0; i<timestamp.length; i++)
+                    let api_res = data2['timestamp'].map((ele, index) => {
+                        let date_nums = ele.split('-');
+                        return [new Date(date_nums[0], date_nums[1], date_nums[2]), data2['analysis_data'][index]];
+                    });
+        
+                    api_res.sort((a, b) => a[0]-b[0]);
+                    console.log(api_res);
+
+                    for(let i=0; i<api_res.length; i++)
                     {
-                        let date_nums = timestamp[i].split('-');
-                        //console.log(date_nums);
                         properties.dataPoints.push({
                             
-                            x: new Date(date_nums[0], date_nums[1], date_nums[2]),
-                            y: analysis_data[i]
+                            x: api_res[i][0],
+                            y: api_res[i][1]
                         });
                     }
                     chart.addTo("data",properties);
@@ -144,17 +148,21 @@ class ChartDrawer extends Component {
 		.then(function(data) {
             chart.options.title.text = name;
             chart.options.data[0].name = "price";
-            
-            let timestamp = data['timestamp'];
-            let prices = data['prices'];
 
-            for(let i=0; i<timestamp.length; i++)
+            let api_res = data['timestamp'].map((ele, index) => {
+                let date_nums = ele.split('-');
+                return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
+            });
+
+            api_res.sort((a, b) => a[0]-b[0]);
+            console.log(api_res);
+
+            for(let i=0; i<api_res.length; i++)
             {
-                let date_nums = timestamp[i].split('-');
-                chart.options.data[0].dataPoints.push({
-					x: new Date(date_nums[0], date_nums[1], date_nums[2]),
-					y: prices[i]
-				})
+                chart.options.data[0].dataPoints.push({     
+                    x: api_res[i][0],
+                    y: api_res[i][1]
+                });
             }
 
 			
@@ -190,16 +198,19 @@ class ChartDrawer extends Component {
                 return response.json();
             })
             .then(function(data) {
-                let timestamp = data['timestamp'];
-                let analysis_data = data['prices'];
-                for(let i=0; i<timestamp.length; i++)
+                let api_res = data['timestamp'].map((ele, index) => {
+                    let date_nums = ele.split('-');
+                    return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
+                });
+
+                api_res.sort((a, b) => a[0]-b[0]);
+                console.log(api_res);
+
+                for(let i=0; i<api_res.length; i++)
                 {
-                    let date_nums = timestamp[i].split('-');
-                    //console.log(date_nums);
-                    properties.dataPoints.push({
-                        
-                        x: new Date(date_nums[0], date_nums[1], date_nums[2]),
-                        y: analysis_data[i]
+                    properties.dataPoints.push({       
+                        x: api_res[i][0],
+                        y: api_res[i][1]
                     });
                 }
                 dataPoints.reverse();
