@@ -1,6 +1,5 @@
 import React, { useState, Fragment, Component } from "react";
 import ReactDOM from "react-dom";
-import CanvasJSChart from './canvasjs.react';
 import payoff from './payoff'
 //var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -13,6 +12,9 @@ const Optsim = () => {
 //class Optsim extends Component {
 
   const [errors,seterrors] = useState([]);
+  const [errors1,seterrors1] = useState([]);
+  const [errors2,seterrors2] = useState([]);
+  const [errors3,seterrors3] = useState([]);
 
   const [startPrice,setstartPrice] = useState('');
   const [endPrice,setendPrice] = useState('');
@@ -27,21 +29,13 @@ const Optsim = () => {
   //Validate form inputs
   function validate0(st_pr, en_pr) {
     const temp_errors = [];
-  
+
     if (st_pr === '') {
       temp_errors.push("Enter a valid start price!");
     }
 
-    else if (st_pr !== '' && !Number(st_pr)) {
-      temp_errors.push("Start Price must be a number!");
-    }
-
     else if (en_pr === '') {
-      temp_errors.push("Enter a valid end price!");
-    }
-
-    else if (en_pr !== '' && !Number(en_pr)) {
-      temp_errors.push("End Price must be a number!");
+        temp_errors.push("Enter a valid end price!");
     }
 
     else if (Number(st_pr) >= Number(en_pr)){
@@ -83,13 +77,17 @@ const Optsim = () => {
     {
       if(event.target.value === '')
       {
-        temp_error.push("Enter a valid strike price!")
+        temp_error.push("Enter a valid strike price for option" + index + "!");
       }
       else if (event.target.value !== '')
       {
         if(!Number(event.target.value)) 
         {
-          temp_error.push("Strike Price must be a number!");
+          temp_error.push("Strike Price must be a number for option" + index + "!");
+        }
+        else if(event.target.value < 0)
+        {
+          temp_error.push("Strike price must be a positive number for option" + index + "!");
         }
       }
     }
@@ -97,25 +95,70 @@ const Optsim = () => {
     {
       if(event.target.value === '')
       {
-        temp_error.push("Enter a valid option price!")
+        temp_error.push("Enter a valid option price for option" + index + "!");
       }
       else if (event.target.value !== '')
       {
         if(!Number(event.target.value)) 
         {
-        temp_error.push("Option Price must be a number!");
+        temp_error.push("Option Price must be a number for option" + index + "!");
+        }
+        else if(event.target.value < 0)
+        {
+          temp_error.push("Option price must be a positive number for option" + index + "!");
         }
       }
     }
-    seterrors(temp_error);
+    seterrors1(temp_error);
     setInputFields(values);
   };
 
   const handleInputPricesChange = (event) => {
+    const temp_error = [];
+
+    if(event.target.name === "startPrice")
+    {
+      if (event.target.value === '') 
+      {
+        temp_error.push("Enter a valid start price!");
+      }
+      else if (event.target.value !== '')
+      {
+        if(!Number(event.target.value)) 
+        {
+          temp_error.push("Start Price must be a number!");
+        }
+        else if(event.target.value < 0)
+        {
+          temp_error.push("Start price must be a positive number.");
+        }
+      }
+    }
+
+    else if(event.target.name === "endPrice")
+    {
+      if (event.target.value === '') {
+        temp_error.push("Enter a valid end price!");
+      }
+      else if (event.target.value !== '')
+      {
+        if(!Number(event.target.value)) 
+        {
+          temp_error.push("End Price must be a number!");
+        }
+        else if(event.target.value < 0)
+        {
+          temp_error.push("End price must be a positive number.");
+        }
+      }
+    }
+
+    seterrors2(temp_error);
     if (event.target.name === "startPrice") {
         setstartPrice(event.target.value);
     }
-    else{
+    else if (event.target.name === "endPrice")
+    {
         setendPrice(event.target.value);
     }
   };
@@ -142,12 +185,36 @@ const Optsim = () => {
       seterrors(error0);
       return;
     }
-    else if(errors.length > 0)
+    else if(errors1.length > 0)
+    {
+      return;
+    }
+    else if(errors2.length > 0)
     {
       return;
     }
 
-    console.log("Error state",errors)
+    const temp_errors_empty = [];
+    for(let option=0;option<[...inputFields].length;option++)
+    {
+      if (inputFields[option].strikePrice === '') {
+        temp_errors_empty.push(`Enter a valid strike price for option${option}!`);
+        break;
+      }
+      else if (inputFields[option].optionPrice === '') {
+        temp_errors_empty.push(`Enter a valid option price for option${option}!`);
+        break;
+      }
+    }
+    console.log("Error temp array",temp_errors_empty);
+    seterrors3(temp_errors_empty);
+    console.log("Error state3",errors3)
+    if(temp_errors_empty > 0)
+    {
+      return;
+    }
+    console.log("Error state1",errors1)
+    console.log("Error state2",errors2)
     // End of checking input fields
     var ans = []
 
@@ -162,22 +229,22 @@ const Optsim = () => {
         {
             if(inputFields[option].optionType === "call")
             {
-              if(inputFields[option].buySell == 'buy')
+              if(inputFields[option].buySell === 'buy')
               {
                 ans[price-startPrice]+=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell == 'sell')
+              else if(inputFields[option].buySell === 'sell')
               {
                 ans[price-startPrice]-=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
             }
-            if(inputFields[option].optionType == 'put')
+            if(inputFields[option].optionType === 'put')
             {
-              if(inputFields[option].buySell == 'buy')
+              if(inputFields[option].buySell === 'buy')
               {
                 ans[price-startPrice]+=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell == 'sell')
+              else if(inputFields[option].buySell === 'sell')
               {
                 ans[price-startPrice]-=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
@@ -228,11 +295,21 @@ const Optsim = () => {
   return (
     <>
       <h1>Option Simulator</h1>
-      <h3>Enter range of stock prices for simulation:</h3>
       <form onSubmit={handleSubmit}>
       {errors.map(error => (
           <h3 style={{color: "red"}} key={error}>Error: {error}</h3>
         ))}
+        {errors1.map(error1 => (
+          <h3 style={{color: "red"}} key={error1}>Error: {error1}</h3>
+        ))}
+        {errors2.map(error2 => (
+          <h3 style={{color: "red"}} key={error2}>Error: {error2}</h3>
+        ))}
+        {errors3.map(error3 => (
+          <h3 style={{color: "red"}} key={error3}>Error: {error3}</h3>
+        ))}
+        <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
+        <h3>Enter range of stock prices for simulation:</h3>
         <div className="form-row">
             <div className="form-group col-sm-12">
                     <label htmlFor="startPrice">Start Price</label>
@@ -284,7 +361,7 @@ const Optsim = () => {
                   id="optionType" value="put" name="optionType" />
                   Put
                 </label>
-                <p> Selected type: {optype} </p>
+                <p> Selected type: {inputFields[index].optionType} </p>
               </div>
 
               <div className="form-group col-sm-4">
@@ -310,7 +387,7 @@ const Optsim = () => {
                   id="buySell" value="sell" name="buySell" />
                   Sell
                 </label>
-                <p>Selected type: {bs} </p>
+                <p> Selected type: {inputFields[index].buySell} </p>
               </div>
               <div className="form-group col-sm-1">
                 <button
