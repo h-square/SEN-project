@@ -2,10 +2,24 @@ const express = require('express');
 const path = require('path');
 const config = require('./config');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
+const setupPassport = require('./auth/passport');
+const protect = require('./auth/protect');
 
 // setting up the server 
 app = express();
 app.use(bodyParser.urlencoded({extended: false}));
+
+// setup passport and sessions
+setupPassport(passport);
+app.use(session({
+    secret: 'stuff',
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // static folder
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -25,9 +39,11 @@ app.use('/api/indicators/EMA', require('./routes/api/indicators/ema'));
 // annual reports
 app.use('/api/report', require('./routes/api/report'));
 
-// add user
-const isValidUser = require('./routes/auth/uservalidate');
-app.use('/useradd', require('./routes/auth/useradd'));
+// login and registeration
+app.use('/user', require('./routes/user/reglogin'));
+
+// dashboard
+app.use('/dashboard', protect, require('./routes/dashboard'));
 
 // start listening
 const PORT = process.env.PORT || config.serv_port;
