@@ -10,13 +10,17 @@ const protect = require('./auth/protect');
 // setting up the server 
 app = express();
 app.use(bodyParser.urlencoded({extended: false}));
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private'); 
+    next();
+});
 
 // setup passport and sessions
 setupPassport(passport);
 app.use(session({
     secret: 'stuff',
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());

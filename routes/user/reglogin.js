@@ -5,14 +5,6 @@ const passport = require('passport');
 
 const router = express.Router();
 
-// forms
-router.get('/login', (req, res) => {
-    res.send('To be replaced with a form');
-});
-router.get('/register', (req, res) => {
-    res.send('To be replaced with a form');
-});
-
 
 // post requests
 router.post('/register', (req, res) => {
@@ -77,20 +69,30 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/dashboard',
-        failureRedirect: '/user/badlogin',
+    passport.authenticate('local', (err, user, info) => {
+        if(err){
+            console.log(err);
+            return next(user);
+        }
+        if(!user){
+            return res.status(401).json({status: "AUTHENTICATION FAILED"});
+        }else{
+            req.logIn(user, err => {
+                if(err){
+                    return next(err);
+                }else{
+                    console.log(`${user.email} just logged in`);
+                    return res.status(200).json({status: "OK", msg: "AUTHENTICATED"});
+                }
+            })
+        }
     })(req, res, next);
 });
 
 router.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/');
-});
-
-// replace with proper login error page
-router.get('/badlogin', (req, res) => {
-    res.send('please login!');
+    req.logOut();
+    req.session.destroy();
+    res.json({status: "OK", msg: "LOGGED OUT"});
 });
 
 module.exports = router;

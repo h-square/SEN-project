@@ -31,6 +31,15 @@ class Home extends Component {
             Annual Reports
         </button>
       </Link>
+
+      <br />
+      <br />
+
+      <Link to={'./cookietest'}>
+        <button variant="raised">
+            Cookie Test
+        </button>
+      </Link>
     </div>
     );
   }
