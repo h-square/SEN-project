@@ -1,5 +1,5 @@
 function protect(req, res, next){
-    console.log(req.isAuthenticated());
+    console.log('protect function is authenticated? =>', req.isAuthenticated());
     if(req.isAuthenticated()){
         return next();
     }else{

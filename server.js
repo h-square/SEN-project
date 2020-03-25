@@ -16,7 +16,6 @@ app.use((req, res, next) => {
 });
 
 // setup passport and sessions
-setupPassport(passport);
 app.use(session({
     secret: 'stuff',
     resave: false,
@@ -24,6 +23,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+setupPassport(passport);
 
 // static folder
 app.use(express.static(path.join(__dirname, 'client/build')));

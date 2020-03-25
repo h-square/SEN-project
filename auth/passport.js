@@ -1,6 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const config = require('../config.js');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
 
 module.exports = passport => {
     passport.use(
@@ -44,7 +45,6 @@ module.exports = passport => {
     );
 
     passport.serializeUser((user, done) => {
-        //console.log(user._id);
         done(null, user._id);
     });
 
@@ -57,9 +57,10 @@ module.exports = passport => {
             if(err){
                 throw err;
             }else{
-                const collection = client.db("data").collection("reports");
+                const collection = client.db("data").collection("auth");
 
-                collection.findOne({id})
+                console.log('deserialised user:', id);
+                collection.findOne({_id: new ObjectId(id)})
                 .then((user, err) => {
                     done(err, user);
                 })

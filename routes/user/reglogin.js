@@ -82,9 +82,11 @@ router.post('/login', (req, res, next) => {
                     return next(err);
                 }else{
                     console.log(`${user.email} just logged in`);
-                    return res.status(200).json({status: "OK", msg: "AUTHENTICATED"});
+                    req.session.save(() => {
+                        res.status(200).json({status: "OK", msg: "AUTHENTICATED"});
+                    });
                 }
-            })
+            });
         }
     })(req, res, next);
 });
