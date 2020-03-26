@@ -1,14 +1,15 @@
 const express = require('express');
 const config = require('../../config.js');
 const axios = require('axios');
-const MongoClient = require('mongodb').MongoClient;
+const firestore = require('../../firebase/firestore');
 
 const router = express.Router();
+const collection = firestore.collection('prices');
 
 router.get('/:symbol', (req, res) => {
     symbol = req.params.symbol;
 
-    if(config.use_av || !config.use_atlas)
+    if(config.use_av || !config.use_firestore)
     {
         let url = `https://www.alphavantage.co/query?`+
             `function=TIME_SERIES_DAILY`+
@@ -49,35 +50,26 @@ router.get('/:symbol', (req, res) => {
     }
     else
     {   
-        let dburi = `mongodb+srv://`+
-        `${config.atlas_user}:${config.atlas_pass}`+
-        `@smap-pmi7t.mongodb.net/test?retryWrites=true&w=majority`;
-
-        MongoClient.connect(dburi, {useUnifiedTopology: true}, (err, client) => {
-            if(err){
-                console.log(err);
-            }else{
-                const collection = client.db("data").collection("prices");
-                const timestamp = [];
-                const prices = [];
-
-                collection.find({symbol})
-                .forEach(doc => {
-                    timestamp.push(doc.timestamp);
-                    prices.push(doc.prices);
+        collection.where('symbol', '==', symbol)
+        .where('year', '>=', config.earliest_year)
+        .get().then(snapshot => {
+            let timestamp = [];
+            let prices = [];
+            if(snapshot.empty){
+                res.status(404).json({msg: "NO AVAILABLE DATA"});
+            } else {
+                snapshot.forEach(doc => {
+                    doc.data().data.forEach(dataPoint => {
+                        timestamp.push(dataPoint.date);
+                        prices.push(dataPoint.price);
+                    });
                 })
-                .then(() => {
-                    if(timestamp.length > 0)
-                        res.json({status: "OK", timestamp, prices});
-                    else
-                        res.json({status: "DB_ERROR", msg: "No data"});
-                    client.close();
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.json({status: "DB_ERROR", msg: "Unexpected Error"});
-                });
+                res.status(200).json({status: "OK", timestamp, prices});
             }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({msg: "UNKNOWN ERROR"});
         });
     }
 });

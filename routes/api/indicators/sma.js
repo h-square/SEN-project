@@ -1,15 +1,16 @@
 const express = require('express');
 const config = require('../../../config.js');
 const axios = require('axios');
-const MongoClient = require('mongodb').MongoClient;
+const firestore = require('../../../firebase/firestore');
 
 const router = express.Router();
+const collection = firestore.collection('indicators-sma');
 
 router.get('/:symbol-:period', (req, res) => {
     const symbol = req.params.symbol;
     const period = req.params.period;
     
-    if(config.use_av || !config.use_atlas)
+    if(config.use_av || !config.use_firestore)
     {
         let url = `https://www.alphavantage.co/query?`+
             `function=sma`+
@@ -42,36 +43,27 @@ router.get('/:symbol-:period', (req, res) => {
     }
     else
     {
-        let dburi = `mongodb+srv://`+
-        `${config.atlas_user}:${config.atlas_pass}`+
-        `@smap-pmi7t.mongodb.net/test?retryWrites=true&w=majority`;
-
-        MongoClient.connect(dburi, {useUnifiedTopology: true}, (err, client) => {
-            if(err){
-                console.log(err);
-            }else{
-                const collection = client.db("data").collection("indicators");
-
-                const timestamp = [];
-                const analysis_data = [];
-
-                collection.find({symbol, indicator: 'sma-'+period})
-                .forEach(doc => {
-                    timestamp.push(doc.timestamp);
-                    analysis_data.push(doc.value);
-                })
-                .then(() => {
-                    if(timestamp.length > 0)
-                        res.json({status: "OK", timestamp, analysis_data});
-                    else
-                        res.json({status: "DB_ERROR", msg: "No data"});
-                    client.close();
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.json({status: "DB_ERROR", msg: "Unexpected Error"});
+        collection.where('symbol', '==', symbol)
+        .where('period', '==', parseInt(period))
+        .where('year', '>=', config.earliest_year)
+        .get().then(snapshot => {
+            let timestamp = [];
+            let analysis_data = [];
+            if(snapshot.empty){
+                res.status(404).json({msg: "NO AVAILABLE DATA"});
+            } else {
+                snapshot.forEach(doc => {
+                    doc.data().data.forEach(dataPoint => {
+                        timestamp.push(dataPoint.date);
+                        analysis_data.push(dataPoint.sma);
+                    });
                 });
+                res.status(200).json({status: "OK", timestamp, analysis_data});
             }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({msg: "UNKNOWN ERROR"});
         });
     }
 });

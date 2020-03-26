@@ -1,15 +1,16 @@
 const express = require('express');
 const config = require('../../config.js');
 const axios = require('axios');
-const MongoClient = require('mongodb').MongoClient;
+const firestore = require('../../firebase/firestore');
 
 const router = express.Router();
+const collection = firestore.collection('reports');
 
 router.get('/:symbol-:year', (req, res) => {
     const symbol = req.params.symbol;
     const year = parseInt(req.params.year);
 
-    if(config.use_fmprep || !config.use_atlas)
+    if(config.use_fmprep || !config.use_firestore)
     {
         let url_income = 'https://financialmodelingprep.com/api/'+
                 'v3/financials/income-statement/'+
@@ -139,38 +140,34 @@ router.get('/:symbol-:year', (req, res) => {
     }
     else
     {
-        let dburi = `mongodb+srv://`+
-        `${config.atlas_user}:${config.atlas_pass}`+
-        `@smap-pmi7t.mongodb.net/test?retryWrites=true&w=majority`;
+        collection.where('symbol', '==', symbol)
+        .where('year', '==', year)
+        .get().then(snapshot => {
+            let matches = [];
+            if(snapshot.empty){
+                res.status(404).json({msg: "NO AVAILABLE DATA"});
+            } else {
+                snapshot.forEach(doc => matches.push(doc.data()));
 
-        MongoClient.connect(dburi, {useUnifiedTopology: true}, (err, client) => {
-            if(err){
-                console.log(err);
-                res.json({status: "DB_ERROR", msg: "CAN'T CONNECT"});
-            }else{
-                const collection = client.db("data").collection("reports");
+                let income_statement = matches[0].income_statement;
+                let balance_statement = matches[0].balance_statement;
+                let cash_statement = matches[0].cash_statement;
 
-                let reports = [];
-                collection.find({symbol, year})
-                .forEach(doc => reports.push(doc))
-                .then(() => client.close())
-                .then(() => {
-                    if(reports.length === 1)
-                    {
-                        delete reports[0]._id;
-                        reports[0].status = "OK";
-                        res.json(reports[0]);
-                    }
-                    else if(reports.length === 0)
-                        res.json({status: "DB_ERROR", msg: "NO DATA"});
-                    else
-                        res.json({status: "DB_ERROR", msg: "UNEXPECTED ERROR"});
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.json({status: "DB_ERROR", msg: "UNEXPECTED ERROR"});
-                });
+                if(matches.length == 1) {
+                    res.status(200).json({
+                        status: "OK", symbol, year,
+                        income_statement,
+                        balance_statement,
+                        cash_statement
+                    });
+                } else {
+                    res.status(500).json({status: "DB ERROR", msg: "INCONSISTENT DATABASE"});
+                }
             }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({msg: "UNKNOWN ERROR"});
         });
     }
 });
