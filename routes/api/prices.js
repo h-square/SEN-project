@@ -1,7 +1,7 @@
 const express = require('express');
 const config = require('../../config.js');
 const axios = require('axios');
-const firestore = require('../../firebase/firestore');
+const firestore = require('../../firebase/firebase').firestore();
 
 const router = express.Router();
 const collection = firestore.collection('prices');

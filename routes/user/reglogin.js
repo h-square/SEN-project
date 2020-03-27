@@ -1,14 +1,13 @@
 const express = require('express');
 const config = require('../../config.js');
-const MongoClient = require('mongodb').MongoClient;
+const firestore = require('../../firebase/firebase').firestore();
 const passport = require('passport');
 
 const router = express.Router();
-
+const collection = firestore.collection('users');
 
 // post requests
 router.post('/register', (req, res) => {
-    // console.log(req.body);
     let {name, email, password, password2} = req.body;
     let errors = [];
 
