@@ -22,47 +22,37 @@ router.post('/register', (req, res) => {
     }
 
     if(errors.length > 0){
-        res.status(422).json({errors});
+        res.status(422).json({status: "REG ERROR", errors});
     }else{
-        let dburi = `mongodb+srv://`+
-        `${config.atlas_user}:${config.atlas_pass}`+
-        `@smap-pmi7t.mongodb.net/test?retryWrites=true&w=majority`;
-
         let user = {
             name,
             email,
             password
         };
 
-        MongoClient.connect(dburi, {useUnifiedTopology: true}, (err, client) => {
-            if(err){
-                console.log(err);
-                res.json({status: "DB_ERROR", msg: "CAN'T CONNECT"});
+        
+        collection.where('email', '==', email).get()
+        .then(snapshot => {
+            let matches = [];
+            snapshot.forEach(doc => matches.push(doc.data()));
+            return matches;
+        })
+        .then(matches => {
+            if(matches.length === 0){
+                collection.add(user);
+                console.log(`${user.email} was registered!`);
+                res.status(200).json({status: "OK", msg: "USER ADDED", user});
+            }else if(matches.length === 1){
+                errors.push('Already Exists');
+                res.status(422).json({status: "ERROR", errors, user});
             }else{
-                const collection = client.db("data").collection("auth");
-
-                let matches = [];
-                collection.find({email})
-                .forEach(doc => matches.push(doc))
-                .then(() => {
-                    if(matches.length === 0){
-                        collection.insertOne(user);
-                        res.status(200).json({status: "OK", msg: "USER ADDED", user});
-                    }else if(matches.length === 1){
-                        errors.push('Already Exists');
-                        res.status(422).json({status: "ERROR", errors, user});
-                    }else{
-                        errors.push('multiple duplicates');
-                        res.status(500).json({status: "INTERNAL SERV ERROR", errors, user});
-                        throw 'multiple duplicates';
-                    }
-                    client.close();
-                })
-                .catch(err => {
-                    console.log(err);
-                    client.close();
-                });
+                errors.push('multiple duplicates');
+                res.status(500).json({status: "INTERNAL SERV ERROR", errors, user});
+                throw 'multiple duplicates';
             }
+        })
+        .catch(err => {
+            console.log(err);
         });
     }
 });
