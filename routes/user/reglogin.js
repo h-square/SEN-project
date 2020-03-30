@@ -9,9 +9,8 @@ const collection = firestore.collection('users');
 
 // get user details
 router.get('/', protect, (req, res) => {
-    console.log(req.body);
     if(req.user) {
-        res.json({status: "OK", user});
+        res.json({status: "OK", user: req.user});
     } else {
         res.status(500).json({msg: "USER NOT FOUND"});
     }
