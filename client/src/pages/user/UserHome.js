@@ -1,6 +1,5 @@
 import React,{Component} from 'react';
 import {Link} from 'react-router-dom';
-const qs = require('querystring');
 
 class UserHome extends Component{
     constructor(props){
@@ -16,13 +15,16 @@ class UserHome extends Component{
             return res.json().user;
         })
         .then(user => {
-            this.setState({user});
+            this.user = user;
             this.forceUpdate();
+        })
+        .catch(err => {
+            console.log(err);
         });
     };
 
     logout=(e)=>{
-        fetch('/user', {
+        fetch('/user/logout', {
             method: 'GET',
             credentials: 'include'
         })
