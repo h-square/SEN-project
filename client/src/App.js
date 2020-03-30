@@ -6,6 +6,8 @@ import Indicators from './pages/indicators/Indicators';
 import Optsim from './pages/options/Optsim';
 import Reports from './pages/reports/Reports';
 import CookieTest from './pages/cookietest/Cookietest'
+import Login from './pages/user/Login';
+import UserHome from './pages/user/UserHome';
 
 class App extends Component {
   render() {
@@ -17,6 +19,8 @@ class App extends Component {
           <Route path='/optsim' component={Optsim}/>
           <Route path='/reports' component={Reports}/>
           <Route path='/cookietest' component={CookieTest}/>
+          <Route path='/login' component={Login}/>
+          <Route path='/user/home' component={UserHome}/>
         </Switch>
       </div>
     )

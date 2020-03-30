@@ -40,6 +40,15 @@ class Home extends Component {
             Cookie Test
         </button>
       </Link>
+
+      <br />
+      <br />
+
+      <Link to={'./login'}>
+        <button variant="raised">
+            Login/Register
+        </button>
+      </Link>
     </div>
     );
   }

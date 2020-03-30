@@ -2,9 +2,20 @@ const express = require('express');
 const config = require('../../config.js');
 const firestore = require('../../firebase/firebase').firestore();
 const passport = require('passport');
+const protect = require('../../auth/protect');
 
 const router = express.Router();
 const collection = firestore.collection('users');
+
+// get user details
+router.get('/', protect, (req, res) => {
+    console.log(req.body);
+    if(req.user) {
+        res.json({status: "OK", user});
+    } else {
+        res.status(500).json({msg: "USER NOT FOUND"});
+    }
+});
 
 // post requests
 router.post('/register', (req, res) => {
