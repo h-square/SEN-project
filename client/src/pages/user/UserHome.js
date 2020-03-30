@@ -12,6 +12,8 @@ class UserHome extends Component{
             credentials: 'include'
         })
         .then(res => {
+            console.log(res.status);
+            console.log(res.json());
             return res.json().user;
         })
         .then(user => {
