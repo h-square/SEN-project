@@ -52,7 +52,7 @@ class UserHome extends Component{
     }
 
     render(){
-        if(this.user){
+        if(this.state.user){
             return(
                 <div className="col-md-6">
                 <h1>You are home, {this.state.user.name}..!</h1>
