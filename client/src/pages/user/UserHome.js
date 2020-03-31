@@ -39,7 +39,10 @@ class UserHome extends Component{
             credentials: 'include'
         })
         .then(res => {
-            if(res.json().status === "OK"){
+            return res.json();
+        })
+        .then(res => {
+            if(res.status === "OK"){
                 this.state.loggedout = true;
             } else {
                 this.state.loggedout = false;
