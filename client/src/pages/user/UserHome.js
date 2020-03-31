@@ -17,7 +17,9 @@ class UserHome extends Component{
         })
         .then(res => {
             console.log(res.status);
-            let data = res.json();
+            return res.json();
+        })
+        .then(data => {
             console.log(data);
             return data.user;
         })
