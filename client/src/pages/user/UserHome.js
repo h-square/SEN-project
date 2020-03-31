@@ -46,6 +46,7 @@ class UserHome extends Component{
             console.log(res);
             if(res.status === "OK"){
                 this.state.loggedout = true;
+                this.state.user = null;
             } else {
                 this.state.loggedout = false;
             }
