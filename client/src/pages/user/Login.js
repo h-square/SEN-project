@@ -49,6 +49,38 @@ class Login extends Component {
 
     register = e => {
         e.preventDefault();
+        let user = {
+            name: this.state.email,
+            email: this.state.email,
+            password: this.state.password,
+            password2: this.state.password
+        };
+
+        fetch('/user/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            body: qs.stringify(user)
+        })
+        .then(res => {
+            return res.json();
+        })
+        .then(res => {
+            console.log(res);
+            if(res.status === "OK"){
+                console.log("redirection turned on!");
+                this.state.redirectionToUserHome = true;
+                this.state.errors = false;
+            } else {
+                this.state.redirectionToUserHome = false;
+                this.state.errors = true;
+            }
+            this.forceUpdate();
+        })
+        .catch(err => {
+            console.log(err);
+        });
     }
 
     getAction = action => {

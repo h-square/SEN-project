@@ -4,6 +4,10 @@ import {Link} from 'react-router-dom';
 class UserHome extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            user: null,
+            loggedout: false
+        };
     }
 
     componentDidMount(){
@@ -16,7 +20,8 @@ class UserHome extends Component{
             return res.json().user;
         })
         .then(user => {
-            this.user = user;
+            this.state.user = user;
+            console.log(user);
             this.forceUpdate();
         })
         .catch(err => {
@@ -31,9 +36,9 @@ class UserHome extends Component{
         })
         .then(res => {
             if(res.json().status === "OK"){
-                this.loggedout = true;
+                this.state.loggedout = true;
             } else {
-                this.loggedout = false;
+                this.state.loggedout = false;
             }
             this.forceUpdate();
         })
@@ -46,11 +51,11 @@ class UserHome extends Component{
         if(this.user){
             return(
                 <div className="col-md-6">
-                <h1>You are home, {this.user.name}</h1>
+                <h1>You are home, {this.state.user.name}..!</h1>
                 <button onClick={this.logout}>Logout</button>
                 </div>
             )
-        } else if (this.loggedout){
+        } else if (this.state.loggedout){
             return(
                 <div className="col-md-6">
                 <h1>You logged out successfully!</h1>
