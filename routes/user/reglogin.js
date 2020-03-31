@@ -53,10 +53,10 @@ router.post('/register', (req, res) => {
                 console.log(`${user.email} was registered!`);
                 res.status(200).json({status: "OK", msg: "USER ADDED", user});
             }else if(matches.length === 1){
-                errors.push('Already Exists');
-                res.status(422).json({status: "ERROR", errors, user});
+                errors.push({ msg: 'User already exists' });
+                res.status(422).json({status: "REG ERROR", errors, user});
             }else{
-                errors.push('multiple duplicates');
+                errors.push({msg: 'Multiple Duplicates in Database'});
                 res.status(500).json({status: "INTERNAL SERV ERROR", errors, user});
                 throw 'multiple duplicates';
             }
@@ -68,19 +68,20 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', (err, user, errors) => {
+        // err => internal server error
+        // errors => reasons why the authentication failed
         if(err){
             console.log(err);
             return next(user);
         }
         if(!user){
-            return res.status(401).json({status: "AUTHENTICATION FAILED"});
+            return res.status(401).json({status: "AUTHENTICATION FAILED", errors});
         }else{
             req.logIn(user, err => {
                 if(err){
                     return next(err);
                 }else{
-                    console.log(`${user.email} just logged in`);
                     req.session.save(() => {
                         res.status(200).json({status: "OK", msg: "AUTHENTICATED"});
                     });

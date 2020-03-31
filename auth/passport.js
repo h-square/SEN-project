@@ -15,13 +15,13 @@ module.exports = passport => {
             })
             .then(() => {
                 if(matches.length == 0){
-                    return done(null, false, {message: 'Unregistered Email'});
+                    return done(null, false, [{msg: 'Unregistered Email'}]);
                 } else if(matches.length === 1){
                     let userData = matches[0];
                     if(password === userData.password){
                         return done(null, userData);
                     }else{
-                        return done(null, false, {message: 'Wrong Password'});
+                        return done(null, false, [{msg: 'Wrong Password'}]);
                     }
                 }else{
                     throw 'multiple duplicates';
