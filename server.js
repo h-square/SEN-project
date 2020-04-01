@@ -43,6 +43,9 @@ app.use('/api/indicators/EMA', require('./routes/api/indicators/ema'));
 // annual reports
 app.use('/api/report', require('./routes/api/report'));
 
+// realtime quotes
+app.use('/api/quote', require('./routes/api/quote'));
+
 // login and registeration
 app.use('/user', require('./routes/user/reglogin'));
 
