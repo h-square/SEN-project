@@ -52,6 +52,9 @@ app.use('/user', require('./routes/user/reglogin'));
 // dashboard
 app.use('/dashboard', protect, require('./routes/dashboard'));
 
+// watchlist
+app.use('/user/watchlist', protect, require('./routes/user/watchlist'));
+
 // start listening
 const PORT = process.env.PORT || config.serv_port;
 

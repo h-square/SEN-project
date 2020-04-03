@@ -30,6 +30,9 @@ router.post('/register', (req, res) => {
     if (password.length < 6) {
         errors.push({ msg: 'Password must be at least 6 characters' });
     }
+    if(!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)){
+        errors.push({msg: 'Invalid Email format!'});
+    }
 
     if(errors.length > 0){
         res.status(422).json({status: "REG ERROR", errors});
