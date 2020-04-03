@@ -47,6 +47,14 @@ router.post('/add', (req, res) => {
     let {stocks} = req.body;
     let new_stocks = stocks;
 
+    if(!(new_stocks instanceof Array)){
+        res.status(401).json({
+            status: "FAILED",
+            msg: `Add 'stocks' to add`
+        });
+        return;
+    }
+
     if(!req.user){
         res.status(401).json({
             status: "FAILED",
@@ -97,6 +105,14 @@ router.post('/remove', (req, res) => {
 
     let {stocks} = req.body;
     let del_stocks = stocks;
+
+    if(!(del_stocks instanceof Array)){
+        res.status(401).json({
+            status: "FAILED",
+            msg: `Add 'stocks' to delete`
+        });
+        return;
+    }
 
     if(!req.user){
         res.status(401).json({
