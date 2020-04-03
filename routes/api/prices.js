@@ -5,9 +5,18 @@ const firestore = require('../../firebase/firebase').firestore();
 
 const router = express.Router();
 const collection = firestore.collection('prices');
+const stocksdb = require('../../firebase/stocks');
 
 router.get('/:symbol', (req, res) => {
     symbol = req.params.symbol;
+
+    if(!stocksdb.has(symbol)){
+        res.json({
+            status: "FAILED",
+            msg: "Invalid stock or Not in Database"
+        });
+        return;
+    }
 
     if(config.use_av || !config.use_firestore)
     {

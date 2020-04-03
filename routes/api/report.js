@@ -5,10 +5,27 @@ const firestore = require('../../firebase/firebase').firestore();
 
 const router = express.Router();
 const collection = firestore.collection('reports');
+const stocksdb = require('../../firebase/stocks');
 
 router.get('/:symbol-:year', (req, res) => {
     const symbol = req.params.symbol;
     const year = parseInt(req.params.year);
+
+    if(!stocksdb.has(symbol)){
+        res.json({
+            status: "FAILED",
+            msg: "Invalid stock or Not in Database"
+        });
+        return;
+    }
+
+    if(year < 2000 || year > 3000){
+        res.json({
+            status: "FAILED",
+            msg: "Invalid year"
+        });
+        return;
+    }
 
     if(config.use_fmprep || !config.use_firestore)
     {

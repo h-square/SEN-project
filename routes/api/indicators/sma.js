@@ -5,10 +5,29 @@ const firestore = require('../../../firebase/firebase').firestore();
 
 const router = express.Router();
 const collection = firestore.collection('indicators-sma');
+const stocksdb = require('../../../firebase/stocks');
+
+const supportedPeriods = [50, 100];
 
 router.get('/:symbol-:period', (req, res) => {
     const symbol = req.params.symbol;
     const period = req.params.period;
+
+    if(!stocksdb.has(symbol)){
+        res.json({
+            status: "FAILED",
+            msg: "Invalid stock or Not in Database"
+        });
+        return;
+    }
+
+    if(!supportedPeriods.includes(parseInt(period))){
+        res.json({
+            status: "FAILED",
+            msg: "Invalid Period"
+        });
+        return;
+    }
     
     if(config.use_av || !config.use_firestore)
     {
