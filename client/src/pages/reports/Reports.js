@@ -2,7 +2,6 @@ import React from 'react';
 import { Component } from 'react';
 import axios from 'axios';
 import Loading from '../../images/Loading.gif';
-import '../../css/materialize.min.css';
 
 class Reports extends Component {
 
