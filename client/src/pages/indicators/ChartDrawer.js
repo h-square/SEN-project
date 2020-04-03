@@ -6,12 +6,15 @@ var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 var dataPoints =[];
 var chart;
+var stock_exists=false;
 
 CanvasJS.addColorSet("colors",["#0000FF","#DC143C","#7FFF00","#FF69B4","#006400"])
 
 class ChartDrawer extends Component {
     
     handleChange = (e) =>{
+        if(stock_exists==true)
+        {
             console.log(e.target.checked)
             if(e.target.checked)
             {
@@ -74,6 +77,8 @@ class ChartDrawer extends Component {
                 chart.render();
             }
         }
+            
+    }
         
     
 
@@ -146,35 +151,45 @@ class ChartDrawer extends Component {
 			return response.json();
 		})
 		.then(function(data) {
-            chart.options.title.text = name;
-            chart.options.data[0].name = "price";
-
-            let api_res = data['timestamp'].map((ele, index) => {
-                let date_nums = ele.split('-');
-                return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
-            });
-
-            api_res.sort((a, b) => a[0]-b[0]);
-            console.log(api_res);
-
-            for(let i=0; i<api_res.length; i++)
+            if(data.status==="FAILED")
             {
-                chart.options.data[0].dataPoints.push({     
-                    x: api_res[i][0],
-                    y: api_res[i][1]
-                });
+                stock_exists=false;
+                alert("Please enter valid stock symbol");
             }
+            else
+            {
+                stock_exists=true;
+                chart.options.title.text = name;
+                chart.options.data[0].name = "price";
 
-			
-			chart.options.data[0].dataPoints.reverse();
-			chart.render(); 
+                let api_res = data['timestamp'].map((ele, index) => {
+                    let date_nums = ele.split('-');
+                    return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
+                });
+
+                api_res.sort((a, b) => a[0]-b[0]);
+                console.log(api_res);
+
+                for(let i=0; i<api_res.length; i++)
+                {
+                    chart.options.data[0].dataPoints.push({     
+                        x: api_res[i][0],
+                        y: api_res[i][1]
+                    });
+                }
+
+                
+                chart.options.data[0].dataPoints.reverse();
+                chart.render(); 
+            }
+            
         })
         .catch(err => console.log(err));
     }
 
 
     componentDidUpdate(prevProp){
-        if(prevProp[0]!==this.props[0]   )
+        if(prevProp[0]!==this.props[0])
         {
             document.getElementById("SMA 100").checked = false;
             document.getElementById("SMA 50").checked = false;
@@ -198,24 +213,34 @@ class ChartDrawer extends Component {
                 return response.json();
             })
             .then(function(data) {
-                let api_res = data['timestamp'].map((ele, index) => {
-                    let date_nums = ele.split('-');
-                    return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
-                });
-
-                api_res.sort((a, b) => a[0]-b[0]);
-                console.log(api_res);
-
-                for(let i=0; i<api_res.length; i++)
+                if(data.status==="FAILED")
                 {
-                    properties.dataPoints.push({       
-                        x: api_res[i][0],
-                        y: api_res[i][1]
-                    });
+                    stock_exists=false;
+                    alert("Please enter valid stock symbol");
                 }
-                dataPoints.reverse();
-                chart.addTo("data",properties);
-                chart.render();
+                else
+                {
+                    stock_exists=true;
+                    let api_res = data['timestamp'].map((ele, index) => {
+                        let date_nums = ele.split('-');
+                        return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
+                    });
+    
+                    api_res.sort((a, b) => a[0]-b[0]);
+                    console.log(api_res);
+    
+                    for(let i=0; i<api_res.length; i++)
+                    {
+                        properties.dataPoints.push({       
+                            x: api_res[i][0],
+                            y: api_res[i][1]
+                        });
+                    }
+                    dataPoints.reverse();
+                    chart.addTo("data",properties);
+                    chart.render();
+                }
+                
             });
         }
         
