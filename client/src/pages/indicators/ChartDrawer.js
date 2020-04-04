@@ -220,8 +220,7 @@ class ChartDrawer extends Component {
                 {
                     stock_exists=true;
                     let api_res = data['timestamp'].map((ele, index) => {
-                        let date_nums = ele.split('-');
-                        return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
+                        return [new Date(ele), data['prices'][index]];
                     });
     
                     api_res.sort((a, b) => a[0]-b[0]);
