@@ -35,9 +35,9 @@ class Home extends Component {
       <br />
       <br />
 
-      <Link to={'./cookietest'}>
+      <Link to={'./dcf'}>
         <button variant="raised">
-            Cookie Test
+            Discrete Cash Flow
         </button>
       </Link>
 
