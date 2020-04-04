@@ -3,7 +3,7 @@ const config = {
         "alphavantage": "replace_with_alphavantage_key"
     },
     "servPort": 5000,
-    "useAlphavantage": true,
+    "useAlphavantage": false,
     "useFmprep": false,
     "useFirestore": true,
     "firestoreURL": "https://smap-c4a6a.firebaseio.com",
