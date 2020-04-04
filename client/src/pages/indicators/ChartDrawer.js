@@ -41,8 +41,7 @@ class ChartDrawer extends Component {
                         dataPoints: []
                     }
                     let api_res = data2['timestamp'].map((ele, index) => {
-                        let date_nums = ele.split('-');
-                        return [new Date(date_nums[0], date_nums[1], date_nums[2]), data2['analysis_data'][index]];
+                        return [new Date(ele), data2['analysis_data'][index]];
                     });
         
                     api_res.sort((a, b) => a[0]-b[0]);
@@ -163,8 +162,7 @@ class ChartDrawer extends Component {
                 chart.options.data[0].name = "price";
 
                 let api_res = data['timestamp'].map((ele, index) => {
-                    let date_nums = ele.split('-');
-                    return [new Date(date_nums[0], date_nums[1], date_nums[2]), data['prices'][index]];
+                    return [new Date(ele), data['prices'][index]];
                 });
 
                 api_res.sort((a, b) => a[0]-b[0]);
