@@ -62,6 +62,7 @@ class UserHome extends Component{
             return(
                 <div className="col-md-6">
                 <h1>You are home, {this.state.user.name}..!</h1>
+                <Link to={"/user/watchlist"}><button variant="raised">View/Modify Watchlist</button></Link>
                 <button onClick={this.logout}>Logout</button>
                 </div>
             )

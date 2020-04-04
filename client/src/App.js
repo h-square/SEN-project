@@ -8,6 +8,7 @@ import Reports from './pages/reports/Reports';
 import CookieTest from './pages/cookietest/Cookietest'
 import Login from './pages/user/Login';
 import UserHome from './pages/user/UserHome';
+import Watchlist from './pages/watchlist/Watchlist';
 
 class App extends Component {
   render() {
@@ -21,6 +22,7 @@ class App extends Component {
           <Route path='/cookietest' component={CookieTest}/>
           <Route path='/login' component={Login}/>
           <Route path='/user/home' component={UserHome}/>
+          <Route path='/user/watchlist' component={Watchlist}/>
         </Switch>
       </div>
     )

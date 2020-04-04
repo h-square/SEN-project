@@ -1,16 +1,23 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+
 const qs = require('querystring');
 
 class Login extends Component {
+
+    initialState = {
+        name: '',
+        email: '',
+        password: '',
+        password2: '',
+        formTitle: 'Login',
+        loginBtn: true,
+        errors: '',
+    }
+
     constructor(props){
         super(props);
-        this.state = {
-            email: '',
-            password: '',
-            formTitle: 'Login',
-            loginBtn: true
-        }
+        this.state = this.initialState;
     }
 
     login = e => {
@@ -38,7 +45,7 @@ class Login extends Component {
                 this.state.errors = false;
             } else {
                 this.state.redirectionToUserHome = false;
-                this.state.errors = true;
+                this.state.errors = res.status;
             }
             this.forceUpdate();
         })
@@ -50,10 +57,10 @@ class Login extends Component {
     register = e => {
         e.preventDefault();
         let user = {
-            name: this.state.email,
+            name: this.state.name,
             email: this.state.email,
             password: this.state.password,
-            password2: this.state.password
+            password2: this.state.password2
         };
 
         fetch('/user/register', {
@@ -74,7 +81,7 @@ class Login extends Component {
                 this.state.errors = false;
             } else {
                 this.state.redirectionToUserHome = false;
-                this.state.errors = true;
+                this.state.errors = res.errors[0].msg;
             }
             this.forceUpdate();
         })
@@ -85,8 +92,10 @@ class Login extends Component {
 
     getAction = action => {
         if(action === 'reg'){
+            this.setState(this.initialState);
             this.setState({formTitle: 'Register New User', loginBtn: false});
         }else{
+            this.setState(this.initialState);
             this.setState({formTitle: 'Login', loginBtn: true});
         }
     }
@@ -105,25 +114,51 @@ class Login extends Component {
             (<button className="registerBtn" onClick={() => this.getAction('reg')}>Register</button>) : 
             (<button className="registerBtn" onClick={() => this.getAction('login')}>Login</button>)
 
+        let login_from = this.state.loginBtn ?
+            (<><label>E-mail</label><input type="text" 
+            value={this.state.email} 
+            onChange={this.handleChange} 
+            name="email" />
+
+            <label>Password</label><input type="password" 
+            value={this.state.password} 
+            onChange={this.handleChange} 
+            name="password" /></>) : 
+            
+            (<><label>Name</label><input type="text" 
+            value={this.state.name} 
+            onChange={this.handleChange} 
+            name="name" />
+
+            <label>E-mail</label><input type="text" 
+            value={this.state.email} 
+            onChange={this.handleChange} 
+            name="email" />
+
+            <label>Password</label><input type="password" 
+            value={this.state.password} 
+            onChange={this.handleChange} 
+            name="password" />
+            
+
+            <label>Re-enter Password</label><input type="password" 
+            value={this.state.password2} 
+            onChange={this.handleChange} 
+            name="password2" />
+            </>);
+
+
         let redirectButton = this.state.redirectionToUserHome ?
             (<Link to={"./user/home"}><button variant="raised">Correct credentials, click to go to your home!</button></Link>):null;
         let error_notification = this.state.errors ? 
-            (<h2>Wrong credentials, try again or register user!</h2>) : null;
+            (<h2>{this.state.errors}</h2>) : null;
 
         return(
             <div className="form_block">
                 <div id="title">{this.state.formTitle}</div>
                 <div className="body">
                     <form>
-                        <input type="text" 
-                        value={this.state.email} 
-                        onChange={this.handleChange} 
-                        name="email" />
-
-                        <input type="password" 
-                        value={this.state.password} 
-                        onChange={this.handleChange} 
-                        name="password" />
+                        {login_from}
 
                         {submitBtn}
                     </form>
