@@ -1,5 +1,6 @@
 const express = require('express');
 const firestore = require('../../firebase/firebase').firestore();
+const config = require('../../config');
 
 const router = express.Router();
 const watchlists = firestore.collection('watchlists');
@@ -7,9 +8,12 @@ const stocksdb = require('../../firebase/stocks');
 
 router.get('/', (req, res) => {
     if(!req.user){
-        res.status(401).json({
-            status: "FAILED",
-            msg: `User not logged in!`
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.auth,
+            errors: [
+                {msg: 'Authenticated but user not Found'}
+            ]
         });
         return;
     }
@@ -18,7 +22,7 @@ router.get('/', (req, res) => {
     .then(snapshot => {
         if(snapshot.empty){
             res.json({
-                status: "OK",
+                status: config.statusCodes.ok,
                 stocks: []
             });
             watchlists.add({
@@ -26,15 +30,17 @@ router.get('/', (req, res) => {
                 stocks: []
             });
         } else if(snapshot.size != 1){
-            res.status(500).json({
-                status: "Failed",
-                msg: "Database Error, Inconsistent (Multiple users)",
-                user:req.user
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.db,
+                errors: [
+                    {msg: 'Inconsistent Database (Multiple users)'}
+                ]
             });
         } else {
             snapshot.forEach(doc => {
                 res.json({
-                    status: "OK",
+                    status: config.statusCodes.ok,
                     stocks: doc.data().stocks
                 });
             });
@@ -48,17 +54,23 @@ router.post('/add', (req, res) => {
     let new_stocks = stocks;
 
     if(!(new_stocks instanceof Array)){
-        res.status(401).json({
-            status: "FAILED",
-            msg: `Add 'stocks' to add`
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: `Provide 'stocks' to add`}
+            ]
         });
         return;
     }
 
     if(!req.user){
-        res.status(401).json({
-            status: "FAILED",
-            msg: `User not logged in!`
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.auth,
+            errors: [
+                {msg: 'Authenticated but user not Found'}
+            ]
         });
         return;
     }
@@ -67,7 +79,7 @@ router.post('/add', (req, res) => {
     .then(snapshot => {
         if(snapshot.empty){
             res.json({
-                status: "OK",
+                status: config.statusCodes.ok,
                 stocks
             });
             watchlists.add({
@@ -75,10 +87,12 @@ router.post('/add', (req, res) => {
                 stocks
             });
         } else if(snapshot.size != 1){
-            res.status(500).json({
-                status: "Failed",
-                msg: "Database Error, Inconsistent (Multiple users)",
-                user: req.user
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.db,
+                errors: [
+                    {msg: 'Inconsistent (Multiple users)'}
+                ]
             });
         } else {
             snapshot.forEach(doc => {
@@ -93,7 +107,7 @@ router.post('/add', (req, res) => {
                     stocks
                 });
                 res.json({
-                    status: "OK",
+                    status: config.statusCodes.ok,
                     stocks
                 });
             });
@@ -107,17 +121,23 @@ router.post('/remove', (req, res) => {
     let del_stocks = stocks;
 
     if(!(del_stocks instanceof Array)){
-        res.status(401).json({
-            status: "FAILED",
-            msg: `Add 'stocks' to delete`
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: `Provide 'stocks' to remove`}
+            ]
         });
         return;
     }
 
     if(!req.user){
-        res.status(401).json({
-            status: "FAILED",
-            msg: `User not logged in!`
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.auth,
+            errors: [
+                {msg: 'Authenticated but user not Found'}
+            ]
         });
         return;
     }
@@ -126,7 +146,7 @@ router.post('/remove', (req, res) => {
     .then(snapshot => {
         if(snapshot.empty){
             res.json({
-                status: "OK",
+                status: config.statusCodes.ok,
                 stocks: []
             });
             watchlists.add({
@@ -134,10 +154,12 @@ router.post('/remove', (req, res) => {
                 stocks: []
             });
         } else if(snapshot.size != 1){
-            res.status(500).json({
-                status: "Failed",
-                msg: "Database Error, Inconsistent (Multiple users)",
-                user: req.user
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.db,
+                errors: [
+                    {msg: 'Inconsistent Database (Multiple Users)'}
+                ]
             });
         } else {
             snapshot.forEach(doc => {
@@ -153,7 +175,7 @@ router.post('/remove', (req, res) => {
                     stocks: new_stocks
                 });
                 res.json({
-                    status: "OK",
+                    status: config.statusCodes.ok,
                     stocks: new_stocks
                 });
             });

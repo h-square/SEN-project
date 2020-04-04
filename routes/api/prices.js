@@ -12,27 +12,42 @@ router.get('/:symbol', (req, res) => {
 
     if(!stocksdb.has(symbol)){
         res.json({
-            status: "FAILED",
-            msg: "Invalid stock or Not in Database"
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: "Invalid Symbol"}
+            ]
         });
         return;
     }
 
-    if(config.use_av || !config.use_firestore)
+    if(config.useAlphavantage || !config.useFirestore)
     {
-        let url = `https://www.alphavantage.co/query?`+
-            `function=TIME_SERIES_DAILY`+
-            `&symbol=${symbol}`+
-            `&outputsize=full`+
-            `&apikey=${config.av_key}`;
         // fetch the data from the database but since
         // we don't have one right now we use alphavantage
-        axios.get(url)
+        axios({
+            url: "https://www.alphavantage.co/query",
+            method: "get",
+            params: {
+                function: "TIME_SERIES_DAILY",
+                symbol,
+                outputsize: "full",
+                apikey: config.keys.alphavantage
+            }
+        })
         .then(res_av => {
             // extract the data
             data = res_av.data;
-            if( !('Time Series (Daily)' in data))
-                throw 'BAD_REQUEST';
+            if( !('Time Series (Daily)' in data)){
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.internal,
+                    errors: [
+                        {msg: 'Alphavantage Refused or Moved'}
+                    ]
+                });
+                return;
+            }
             data = data['Time Series (Daily)'];
             
             const timestamp = [];
@@ -47,25 +62,42 @@ router.get('/:symbol', (req, res) => {
             });
 
             // send the proper response
-            res.json({status: "OK", timestamp, prices});
+            res.json({
+                status: config.statusCodes.ok,
+                timestamp,
+                prices
+            });
 
         })
         .catch(err => {
             // the above .then code could generate error
             // we can inspect the error and do different tasks
             // but here we don't
-            res.json({status: "SERVER_ERROR OR BAD_REQUEST"});
+            console.log(`GET (prices) failed: ${symbol}:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
     else
     {   
         collection.where('symbol', '==', symbol)
-        .where('year', '>=', config.earliest_year)
+        .where('year', '>=', config.earliestYear)
         .get().then(snapshot => {
             let timestamp = [];
             let prices = [];
             if(snapshot.empty){
-                res.status(404).json({msg: "NO AVAILABLE DATA"});
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: `Database doesn't have relevant data`}
+                    ]
+                });
             } else {
                 snapshot.forEach(doc => {
                     doc.data().data.forEach(dataPoint => {
@@ -73,12 +105,22 @@ router.get('/:symbol', (req, res) => {
                         prices.push(dataPoint.price);
                     });
                 })
-                res.status(200).json({status: "OK", timestamp, prices});
+                res.json({
+                    status: config.statusCodes.ok,
+                    timestamp,
+                    prices
+                });
             }
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({msg: "UNKNOWN ERROR"});
+            console.log(`GET (prices) failed: ${symbol}-${period}:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
 });

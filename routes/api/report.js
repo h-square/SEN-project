@@ -9,20 +9,26 @@ const stocksdb = require('../../firebase/stocks');
 
 router.get('/:symbol-:year', (req, res) => {
     const symbol = req.params.symbol;
+
+    if(isNaN(req.params.year) || parseInt(req.params.year) < 2000 || parseInt(req.params.year) > 3000){
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: "Invalid Year"}
+            ]
+        });
+        return;
+    }
     const year = parseInt(req.params.year);
 
     if(!stocksdb.has(symbol)){
         res.json({
-            status: "FAILED",
-            msg: "Invalid stock or Not in Database"
-        });
-        return;
-    }
-
-    if(year < 2000 || year > 3000){
-        res.json({
-            status: "FAILED",
-            msg: "Invalid year"
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: "Invalid Symbol"}
+            ]
         });
         return;
     }
@@ -44,7 +50,7 @@ router.get('/:symbol-:year', (req, res) => {
             let data = res_fmprep.data;
             let result = {};
             if(!data.financials){
-                throw 'BAD_API';
+                throw 'Financial Modeling Prep Refused or Moved';
             }else{
                 for(let i=0; i<data.financials.length; i++)
                 {
@@ -72,7 +78,7 @@ router.get('/:symbol-:year', (req, res) => {
             let data = res_fmprep.data;
             let result = {};
             if(!data.financials){
-                throw 'BAD_API';
+                throw 'Financial Modeling Prep Refused or Moved';
             }else{
                 for(let i=0; i<data.financials.length; i++)
                 {
@@ -100,7 +106,7 @@ router.get('/:symbol-:year', (req, res) => {
             let data = res_fmprep.data;
             let result = {};
             if(!data.financials){
-                throw 'BAD_API';
+                throw 'Financial Modeling Prep Refused or Moved';
             }else{
                 for(let i=0; i<data.financials.length; i++)
                 {
@@ -125,33 +131,36 @@ router.get('/:symbol-:year', (req, res) => {
 
         Promise.all([income_statement, balance_statement, cash_statement])
         .then(values => {
-            let final = {status: "OK", symbol, year};
+            let final = {status: config.statusCodes.ok, symbol, year};
             if(Object.keys(values[0]).length > 0)
                 final.income_statement = values[0];
             else{
-                res.json({status: "API_ERROR", msg: "NO DATA"});
-                return;
+                throw 'Financial Modeling Prep Refused or Moved';
             }
             
             if(Object.keys(values[1]).length > 0)
                 final.balance_statement = values[1];
             else{
-                res.json({status: "API_ERROR", msg: "NO DATA"});
-                return;
+                throw 'Financial Modeling Prep Refused or Moved';
             }
             
             if(Object.keys(values[2]).length > 0)
                 final.cash_statement = values[2];
             else{
-                res.json({status: "API_ERROR", msg: "NO DATA"});
-                return;
+                throw 'Financial Modeling Prep Refused or Moved';
             }
 
             res.json(final);
         })
         .catch(err => {
-            console.log(err);
-            res.json({status: "API_ERROR", msg: "UNEXPECTED ERROR"});
+            console.log(`GET (report) failed: ${symbol}-${year}:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
         
     }
@@ -162,7 +171,13 @@ router.get('/:symbol-:year', (req, res) => {
         .get().then(snapshot => {
             let matches = [];
             if(snapshot.empty){
-                res.status(404).json({msg: "NO AVAILABLE DATA"});
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: `Database doesn't have relevant data`}
+                    ]
+                });
             } else {
                 snapshot.forEach(doc => matches.push(doc.data()));
 
@@ -172,19 +187,31 @@ router.get('/:symbol-:year', (req, res) => {
 
                 if(matches.length == 1) {
                     res.status(200).json({
-                        status: "OK", symbol, year,
+                        status: config.statusCodes.ok, symbol, year,
                         income_statement,
                         balance_statement,
                         cash_statement
                     });
                 } else {
-                    res.status(500).json({status: "DB ERROR", msg: "INCONSISTENT DATABASE"});
+                    res.json({
+                        status: config.statusCodes.failed,
+                        errorType: config.errorCodes.db,
+                        errors: [
+                            {msg: `Database Inconsistent`}
+                        ]
+                    });
                 }
             }
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({msg: "UNKNOWN ERROR"});
+            console.log(`GET (report) failed: ${symbol}-${year}:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
 });

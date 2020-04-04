@@ -15,35 +15,52 @@ router.get('/:symbol-:period', (req, res) => {
 
     if(!stocksdb.has(symbol)){
         res.json({
-            status: "FAILED",
-            msg: "Invalid stock or Not in Database"
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: "Invalid Symbol"}
+            ]
         });
         return;
     }
 
-    if(!supportedPeriods.includes(parseInt(period))){
+    if(isNaN(period) || !supportedPeriods.includes(parseInt(period))){
         res.json({
-            status: "FAILED",
-            msg: "Invalid Period"
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: "Invalid Period"}
+            ]
         });
         return;
     }
     
-    if(config.use_av || !config.use_firestore)
+    if(config.useAlphavantage || !config.useFirestore)
     {
-        let url = `https://www.alphavantage.co/query?`+
-            `function=ema`+
-            `&symbol=${symbol}`+
-            `&interval=daily`+
-            `&time_period=${period}`+
-            `&series_type=open`+
-            `&apikey=${config.av_key}`;
-
-        axios.get(url)
+        axios({
+            url: "https://www.alphavantage.co/query",
+            method: "get",
+            params: {
+                function: "ema",
+                symbol,
+                interval: "daily",
+                time_period: period,
+                series_type: "open",
+                apikey: config.keys.alphavantage
+            }
+        })
         .then(res_av => {
             data = res_av.data;
-            if( !('Technical Analysis: EMA' in data))
-                throw 'BAD_REQUEST';
+            if( !('Technical Analysis: EMA' in data)){
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.internal,
+                    errors: [
+                        {msg: 'Alphavantage Refused or Moved'}
+                    ]
+                });
+                return;
+            }
             data = data['Technical Analysis: EMA'];
             
             const timestamp = [];
@@ -53,22 +70,39 @@ router.get('/:symbol-:period', (req, res) => {
                 analysis_data.push(parseFloat(data[date]['EMA']));
             });
             //console.log(timestamp, sma_data);
-            res.json({status: "OK", timestamp, analysis_data});
+            res.json({
+                status: config.statusCodes.ok,
+                timestamp,
+                analysis_data
+            });
         })
         .catch(err => {
-            res.json({status: "SERVER_ERROR OR BAD_REQUEST"});
+            console.log(`GET (EMA) failed: ${symbol}-${period}:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
     else
     {
         collection.where('symbol', '==', symbol)
         .where('period', '==', parseInt(period))
-        .where('year', '>=', config.earliest_year)
+        .where('year', '>=', config.earliestYear)
         .get().then(snapshot => {
             let timestamp = [];
             let analysis_data = [];
             if(snapshot.empty){
-                res.status(404).json({msg: "NO AVAILABLE DATA"});
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: `Database doesn't have relevant data`}
+                    ]
+                });
             } else {
                 snapshot.forEach(doc => {
                     doc.data().data.forEach(dataPoint => {
@@ -76,12 +110,22 @@ router.get('/:symbol-:period', (req, res) => {
                         analysis_data.push(dataPoint.ema);
                     });
                 })
-                res.status(200).json({status: "OK", timestamp, analysis_data});
+                res.json({
+                    status: config.statusCodes.ok,
+                    timestamp,
+                    analysis_data
+                });
             }
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({msg: "UNKNOWN ERROR"});
+            console.log(`GET (EMA) failed: ${symbol}-${period}:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
 });

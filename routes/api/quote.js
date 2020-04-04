@@ -12,13 +12,16 @@ router.get('/:symbol', (req, clientres) => {
 
     if(!stocksdb.has(symbol)){
         clientres.json({
-            status: "FAILED",
-            msg: "Invalid stock or Not in Database"
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors: [
+                {msg: "Invalid Symbol"}
+            ]
         });
         return;
     }
 
-    if(config.use_av || !config.use_firestore)
+    if(config.useAlphavantage || !config.useFirestore)
     {
         axios({
             url: 'http://www.alphavantage.co/query',
@@ -26,23 +29,24 @@ router.get('/:symbol', (req, clientres) => {
             params: {
                 function: 'GLOBAL_QUOTE',
                 symbol,
-                apikey: config.av_key
+                apikey: config.keys.alphavantage
             }
         })
         .then(res => {
             // if request fails or api has bad data
             if(res.status !== 200){
-                throw `alphavantage connection error`;
+                throw `Alphavantage Refused or Moved`;
             } else {
                 if(res.data['Global Quote']){
                     return res.data['Global Quote'];
                 } else {
-                    throw 'alphavantage api error';
+                    throw 'Alphavantage Refused or Moved';
                 }
             }
         })
         .then(data => {
-            let res = {
+            clientres.json({
+                status: config.statusCodes.ok,
                 symbol: data['01. symbol'],
                 open: parseFloat(data['02. open']),
                 high: parseFloat(data['03. high']),
@@ -53,12 +57,17 @@ router.get('/:symbol', (req, clientres) => {
                 previousClose: parseFloat(data['08. previous close']),
                 change: parseFloat(data['09. change']),
                 changePercent: parseFloat(data['10. change percent'].slice(0, -1))
-            };
-            res.status = "OK";
-            clientres.json(res);
+            });
         })
         .catch(err => {
-            clientres.json({status: "Failed", msg: err});
+            console.log(`GET (quote) failed: ${symbol}:`, err);
+            clientres.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
     else
@@ -66,22 +75,40 @@ router.get('/:symbol', (req, clientres) => {
         collection.where('symbol', '==', symbol)
         .get().then(snapshot => {
             if(snapshot.empty){
-                clientres.json({msg: "Quote Data not available"});
+                clientres.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: `Database doesn't have relevant data`}
+                    ]
+                });
             } else {
                 if(snapshot.size != 1){
-                    clientres.json({msg: "Database Inconsistent"});
+                    clientres.json({
+                        status: config.statusCodes.failed,
+                        errorType: config.errorCodes.db,
+                        errors: [
+                            {msg: `Database inconsistent`}
+                        ]
+                    });
                 } else {
                     snapshot.forEach(doc => {
                         let data = doc.data();
-                        data.status = "OK";
+                        data.status = config.statusCodes.ok;
                         clientres.json(data);
                     })
                 }
             }
         })
         .catch(err => {
-            console.log(err);
-            res.status(500).json({msg: "UNKNOWN ERROR"});
+            console.log(`GET (quote) failed: ${symbol}:`, err);
+            clientres.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
 });
