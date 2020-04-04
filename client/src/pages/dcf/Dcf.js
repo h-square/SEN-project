@@ -47,13 +47,13 @@ axios.get(url)
         fcf1=res.data.cash_statement['Free Cash Flow'];
         //console.log(fcf1);
         netdebt=res.data.balance_statement['Net Debt'];
-        var url='https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/'+sym+'-'+y2;
+        var url='/api/report/'+sym+'-'+y2;
         axios.get(url)
             .then(res=>{
                 //console.log('Done');
                 fcf2=res.data.cash_statement['Free Cash Flow'];
                 //console.log(fcf2);
-                var url='https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/'+sym+'-'+y3;
+                var url='/api/report/'+sym+'-'+y3;
                 axios.get(url)
                     .then(res=>{
                         //console.log('Done');
