@@ -56,6 +56,6 @@ app.use('/dashboard', protect, require('./routes/dashboard'));
 app.use('/user/watchlist', protect, require('./routes/user/watchlist'));
 
 // start listening
-const PORT = process.env.PORT || config.serv_port;
+const PORT = process.env.PORT || config.servPort;
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}...`));

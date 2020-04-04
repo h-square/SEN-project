@@ -10,9 +10,18 @@ const collection = firestore.collection('users');
 // get user details
 router.get('/', protect, (req, res) => {
     if(req.user) {
-        res.json({status: "OK", user: req.user});
+        res.json({
+            status: config.statusCodes.ok,
+            user: req.user
+        });
     } else {
-        res.status(500).json({msg: "USER NOT FOUND"});
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.db,
+            errors: [
+                {msg: 'User Authenticated but no data'}
+            ]
+        });
     }
 });
 
@@ -35,7 +44,11 @@ router.post('/register', (req, res) => {
     }
 
     if(errors.length > 0){
-        res.status(422).json({status: "REG ERROR", errors});
+        res.status(422).json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.api,
+            errors
+        });
     }else{
         let user = {
             name,
@@ -54,18 +67,37 @@ router.post('/register', (req, res) => {
             if(matches.length === 0){
                 collection.add(user);
                 console.log(`${user.email} was registered!`);
-                res.status(200).json({status: "OK", msg: "USER ADDED", user});
+                res.json({
+                    status: config.statusCodes.ok,
+                    user
+                });
             }else if(matches.length === 1){
                 errors.push({ msg: 'User already exists' });
-                res.status(422).json({status: "REG ERROR", errors, user});
+                res.status(422).json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.api,
+                    errors,
+                    user
+                });
             }else{
-                errors.push({msg: 'Multiple Duplicates in Database'});
-                res.status(500).json({status: "INTERNAL SERV ERROR", errors, user});
-                throw 'multiple duplicates';
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: 'Inconsistent Database'}
+                    ]
+                });
             }
         })
         .catch(err => {
-            console.log(err);
+            console.log(`Registeration failed:`, err);
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.internal,
+                errors: [
+                    {msg: 'Unexpected Error', error: err}
+                ]
+            });
         });
     }
 });
