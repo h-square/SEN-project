@@ -111,14 +111,21 @@ router.post('/login', (req, res, next) => {
             return next(user);
         }
         if(!user){
-            return res.status(401).json({status: "AUTHENTICATION FAILED", errors});
+            return res.status(401).json({
+                status: config.statusCodes.failed, 
+                errorType: config.errorCodes.auth,
+                errors
+            });
         }else{
             req.logIn(user, err => {
                 if(err){
                     return next(err);
                 }else{
                     req.session.save(() => {
-                        res.status(200).json({status: "OK", msg: "AUTHENTICATED"});
+                        res.json({
+                            status: config.statusCodes.ok,
+                            user
+                        });
                     });
                 }
             });

@@ -16,8 +16,7 @@ const config = {
         "api": "APIERROR",
         "db": "DATABASERROR",
         "internal": "SERVERERROR",
-        "auth": "AUTHENTICATIONERROR",
-        
+        "auth": "AUTHENTICATIONERROR"
     }
 };
 
