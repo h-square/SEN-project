@@ -8,7 +8,7 @@ const collection = firestore.collection('quotes');
 const stocksdb = require('../../firebase/stocks');
 
 router.get('/:symbol', (req, clientres) => {
-    symbol = req.params.symbol;
+    symbol = req.params.symbol.trim().toUpperCase();
 
     if(!stocksdb.has(symbol)){
         clientres.json({

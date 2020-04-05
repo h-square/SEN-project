@@ -75,6 +75,10 @@ router.post('/add', (req, res) => {
         return;
     }
 
+    for(let i=0; i<new_stocks.length; i++){
+        new_stocks[i] = new_stocks[i].trim().toUpperCase();
+    }
+
     watchlists.where('email', '==', req.user.email).get()
     .then(snapshot => {
         if(snapshot.empty){
@@ -140,6 +144,10 @@ router.post('/remove', (req, res) => {
             ]
         });
         return;
+    }
+
+    for(let i=0; i<new_stocks.length; i++){
+        new_stocks[i] = new_stocks[i].trim().toUpperCase();
     }
 
     watchlists.where('email', '==', req.user.email).get()

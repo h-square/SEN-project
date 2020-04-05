@@ -8,7 +8,7 @@ const collection = firestore.collection('prices');
 const stocksdb = require('../../firebase/stocks');
 
 router.get('/:symbol', (req, res) => {
-    symbol = req.params.symbol;
+    symbol = req.params.symbol.trim().toUpperCase();
 
     if(!stocksdb.has(symbol)){
         res.json({

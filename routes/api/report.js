@@ -8,7 +8,7 @@ const collection = firestore.collection('reports');
 const stocksdb = require('../../firebase/stocks');
 
 router.get('/:symbol-:year', (req, res) => {
-    const symbol = req.params.symbol;
+    const symbol = req.params.symbol.trim().toUpperCase();
 
     if(isNaN(req.params.year) || parseInt(req.params.year) < 2000 || parseInt(req.params.year) > 3000){
         res.json({
@@ -33,7 +33,7 @@ router.get('/:symbol-:year', (req, res) => {
         return;
     }
 
-    if(config.use_fmprep || !config.use_firestore)
+    if(config.useFmprep || !config.useFirestore)
     {
         let url_income = 'https://financialmodelingprep.com/api/'+
                 'v3/financials/income-statement/'+

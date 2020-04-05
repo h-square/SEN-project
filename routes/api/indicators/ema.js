@@ -10,7 +10,7 @@ const stocksdb = require('../../../firebase/stocks');
 const supportedPeriods = [50, 100];
 
 router.get('/:symbol-:period', (req, res) => {
-    const symbol = req.params.symbol;
+    const symbol = req.params.symbol.trim().toUpperCase();
     const period = req.params.period;
 
     if(!stocksdb.has(symbol)){
