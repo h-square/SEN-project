@@ -49,8 +49,8 @@ app.use('/api/quote', require('./routes/api/quote'));
 // login and registeration
 app.use('/user', require('./routes/user/reglogin'));
 
-// dashboard
-app.use('/dashboard', protect, require('./routes/dashboard'));
+// exists
+app.use('/api/exists', require('./routes/api/exist'));
 
 // watchlist
 app.use('/user/watchlist', protect, require('./routes/user/watchlist'));
