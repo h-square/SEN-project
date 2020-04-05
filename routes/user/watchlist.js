@@ -146,8 +146,8 @@ router.post('/remove', (req, res) => {
         return;
     }
 
-    for(let i=0; i<new_stocks.length; i++){
-        new_stocks[i] = new_stocks[i].trim().toUpperCase();
+    for(let i=0; i<del_stocks.length; i++){
+        del_stocks[i] = del_stocks[i].trim().toUpperCase();
     }
 
     watchlists.where('email', '==', req.user.email).get()
