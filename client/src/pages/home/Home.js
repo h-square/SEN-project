@@ -37,7 +37,7 @@ class Home extends Component {
 
       <Link to={'./dcf'}>
         <button variant="raised">
-            Discrete Cash Flow
+            Prediction
         </button>
       </Link>
 

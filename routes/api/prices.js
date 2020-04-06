@@ -10,7 +10,7 @@ const stocksdb = require('../../firebase/stocks');
 router.get('/:symbol', (req, res) => {
     symbol = req.params.symbol.trim().toUpperCase();
 
-    if(!stocksdb.has(symbol)){
+    if((config.useAlphavantage || !config.useFirestore) && !stocksdb.has(symbol)){
         res.json({
             status: config.statusCodes.failed,
             errorType: config.errorCodes.api,

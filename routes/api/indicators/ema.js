@@ -13,7 +13,7 @@ router.get('/:symbol-:period', (req, res) => {
     const symbol = req.params.symbol.trim().toUpperCase();
     const period = req.params.period;
 
-    if(!stocksdb.has(symbol)){
+    if((config.useAlphavantage || !config.useFirestore) && !stocksdb.has(symbol)){
         res.json({
             status: config.statusCodes.failed,
             errorType: config.errorCodes.api,

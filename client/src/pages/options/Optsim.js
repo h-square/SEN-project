@@ -1,5 +1,6 @@
 import React, { useState, Fragment, Component } from "react";
 import ReactDOM from "react-dom";
+import CanvasJSChart from './canvasjs.react';
 import payoff from './payoff'
 //var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -13,6 +14,7 @@ const Optsim = () => {
 
   const [errors,seterrors] = useState([]);
   const [errors1,seterrors1] = useState([]);
+  const [errors11,seterrors11] = useState([]);
   const [errors2,seterrors2] = useState([]);
   const [errors3,seterrors3] = useState([]);
 
@@ -51,9 +53,12 @@ const Optsim = () => {
   };
 
   const handleRemoveFields = index => {
-    const values = [...inputFields];
-    values.splice(index, 1);
-    setInputFields(values);
+    if([...inputFields].length > 1)
+    {
+      const values = [...inputFields];
+      values.splice(index, 1);
+      setInputFields(values);
+    }
   };
 
   const handleInputChange = (index, event) => {
@@ -72,9 +77,10 @@ const Optsim = () => {
         setbs(event.target.value)
     }
 
-    const temp_error = [];
+    
     if(event.target.name === "strikePrice")
     {
+      const temp_error = [];
       if(event.target.value === '')
       {
         temp_error.push("Enter a valid strike price for option" + index + "!");
@@ -90,26 +96,30 @@ const Optsim = () => {
           temp_error.push("Strike price must be a positive number for option" + index + "!");
         }
       }
+      seterrors1(temp_error);
     }
     else if(event.target.name === "optionPrice")
     {
+      const temp_error1 = [];
       if(event.target.value === '')
       {
-        temp_error.push("Enter a valid option price for option" + index + "!");
+        temp_error1.push("Enter a valid option price for option" + index + "!");
       }
       else if (event.target.value !== '')
       {
         if(!Number(event.target.value)) 
         {
-        temp_error.push("Option Price must be a number for option" + index + "!");
+        temp_error1.push("Option Price must be a number for option" + index + "!");
         }
         else if(event.target.value < 0)
         {
-          temp_error.push("Option price must be a positive number for option" + index + "!");
+          temp_error1.push("Option price must be a positive number for option" + index + "!");
         }
       }
+      seterrors11(temp_error1);
     }
-    seterrors1(temp_error);
+    //seterrors1(temp_error);
+    //seterrors11(temp_error1);
     setInputFields(values);
   };
 
@@ -155,11 +165,13 @@ const Optsim = () => {
 
     seterrors2(temp_error);
     if (event.target.name === "startPrice") {
-        setstartPrice(event.target.value);
+        const v1 = (event.target.value).trim();
+        setstartPrice(v1);
     }
     else if (event.target.name === "endPrice")
     {
-        setendPrice(event.target.value);
+        const v2 = (event.target.value).trim();
+        setendPrice(v2);
     }
   };
 
@@ -181,11 +193,15 @@ const Optsim = () => {
     //let error1 = validate1(inputFields.strikePrice,inputFields.optionPrice);
     console.log("Returned error0", error0)
     //console.log("Returned error1", error1)
+    seterrors(error0);
     if (error0.length > 0) {
-      seterrors(error0);
       return;
     }
     else if(errors1.length > 0)
+    {
+      return;
+    }
+    else if(errors11.length > 0)
     {
       return;
     }
@@ -217,34 +233,37 @@ const Optsim = () => {
     console.log("Error state2",errors2)
     // End of checking input fields
     var ans = []
-
+    //const v1 = parseFloat(startPrice.trim())
+    //const v2 = parseFloat(endPrice.trim())
+    //setstartPrice(v1)
+    //setendPrice(v2)
     for(let i=0;i<(endPrice-startPrice+1);i++)
     {
         ans[i]=0;
     }
-
+    console.log("New end price",endPrice)
     for(let price=startPrice;price<=endPrice;price++)
     {
         for(let option=0;option<[...inputFields].length;option++)
         {
             if(inputFields[option].optionType === "call")
             {
-              if(inputFields[option].buySell === 'buy')
+              if(inputFields[option].buySell == 'buy')
               {
                 ans[price-startPrice]+=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell === 'sell')
+              else if(inputFields[option].buySell == 'sell')
               {
                 ans[price-startPrice]-=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
             }
-            if(inputFields[option].optionType === 'put')
+            if(inputFields[option].optionType == 'put')
             {
-              if(inputFields[option].buySell === 'buy')
+              if(inputFields[option].buySell == 'buy')
               {
                 ans[price-startPrice]+=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell === 'sell')
+              else if(inputFields[option].buySell == 'sell')
               {
                 ans[price-startPrice]-=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
@@ -294,6 +313,7 @@ const Optsim = () => {
   //render(){
   return (
     <>
+      <center>
       <h1>Option Simulator</h1>
       <form onSubmit={handleSubmit}>
       {errors.map(error => (
@@ -301,6 +321,9 @@ const Optsim = () => {
         ))}
         {errors1.map(error1 => (
           <h3 style={{color: "red"}} key={error1}>Error: {error1}</h3>
+        ))}
+        {errors11.map(error11 => (
+          <h3 style={{color: "red"}} key={error11}>Error: {error11}</h3>
         ))}
         {errors2.map(error2 => (
           <h3 style={{color: "red"}} key={error2}>Error: {error2}</h3>
@@ -344,7 +367,7 @@ const Optsim = () => {
                   className="form-control"
                   id="strikePrice"
                   name="strikePrice"
-                  //value={inputField.firstName}
+                  value={inputFields[index].strikePrice}
                   onChange={event => handleInputChange(index, event)}
                 />
               </div>
@@ -371,7 +394,7 @@ const Optsim = () => {
                   className="form-control" 
                   id="optionPrice"
                   name="optionPrice"
-                  //value={inputField.lastName}
+                  value={inputFields[index].optionPrice}
                   onChange={event => handleInputChange(index, event)}
                 />
               </div>
@@ -389,7 +412,7 @@ const Optsim = () => {
                 </label>
                 <p> Selected type: {inputFields[index].buySell} </p>
               </div>
-              <div className="form-group col-sm-1">
+                <div className="form-group col-sm-1">
                 <button
                   className="btn btn-link"
                   type="button"
@@ -397,6 +420,7 @@ const Optsim = () => {
                 >
                   -
                 </button>
+
                 <button
                   className="btn btn-link"
                   type="button"
@@ -404,7 +428,7 @@ const Optsim = () => {
                 >
                   +
                 </button>
-              </div>
+                </div>
             </Fragment>
           ))}
         </div>
@@ -423,6 +447,7 @@ const Optsim = () => {
       <div id = "chart">
       
       </div>
+      </center>
     </>
   );
     //      }

@@ -22,7 +22,7 @@ router.get('/:symbol-:year', (req, res) => {
     }
     const year = parseInt(req.params.year);
 
-    if(!stocksdb.has(symbol)){
+    if((config.useAlphavantage || !config.useFirestore) && !stocksdb.has(symbol)){
         res.json({
             status: config.statusCodes.failed,
             errorType: config.errorCodes.api,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Component } from 'react';
-import Loading from '../../images/Loading.gif';
+import Loading from '../../images/Loading.gif'
 
 class Display extends Component {
 
@@ -9,7 +9,9 @@ class Display extends Component {
     this.state = {
       symbol: '',
       showData: false,
-      error: false,
+      error: false,   
+      dcf: null,
+      data: null,
       print: false
     }
     this.handleChange = this.handleChange.bind(this);
@@ -24,8 +26,8 @@ class Display extends Component {
     e.preventDefault();
     this.setState({
       showData:false,
-      dcf: null,
       error:false,
+      dcf: null,
       data: null,
       print: true
     })
@@ -41,19 +43,20 @@ var fcf1;
 var fcf2;
 var fcf3;
 var netdebt;
-var url='/api/report/'+sym+'-'+y1;
+var url='https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/'+sym+'-'+y1;
 axios.get(url)
     .then(res=>{
+        var symb = res.data.symbol;
         fcf1=res.data.cash_statement['Free Cash Flow'];
         //console.log(fcf1);
         netdebt=res.data.balance_statement['Net Debt'];
-        var url='/api/report/'+sym+'-'+y2;
+        var url='https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/'+sym+'-'+y2;
         axios.get(url)
             .then(res=>{
                 //console.log('Done');
                 fcf2=res.data.cash_statement['Free Cash Flow'];
                 //console.log(fcf2);
-                var url='/api/report/'+sym+'-'+y3;
+                var url='https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/'+sym+'-'+y3;
                 axios.get(url)
                     .then(res=>{
                         //console.log('Done');
@@ -85,7 +88,8 @@ axios.get(url)
                         //console.log(terminalvalue)
 
                         var presentvalue=new Array(10);
-                        var i=1,sum=0;
+                        var sum=0;
+                        i=1;
                         while(i<=10)
                         {
                             presentvalue[i-1]=futurecashflow[i-1]/Math.pow((1+discountrate),i);
@@ -97,7 +101,7 @@ axios.get(url)
                         //console.log(sum,prtr,netdebt)
                         var totalpresentvalue=sum+prtr-netdebt;
                         //console.log(totalpresentvalue)
-                        var url='https://financialmodelingprep.com/api/v3/enterprise-value/FB';
+                        var url='https://financialmodelingprep.com/api/v3/enterprise-value/'+sym;
                         axios.get(url)
                             .then(res=>{
                                 //console.log(res.data);
@@ -106,14 +110,44 @@ axios.get(url)
                                 //console.log(num);
                                 //console.log(totalpresentvalue,totalshares);
                                 var dcf=totalpresentvalue/num;
-                                this.setState({
-                                  symbol: sym,
-                                  showData: true,
-                                  error: false,
-                                  dcf: dcf,
-                                  print: false
-                                })
-                                console.log(dcf);
+                                axios.get(`https://cors-anywhere.herokuapp.com/http://still-brushlands-16837.herokuapp.com/todo/${sym}`)
+                                  .then(res => {
+                                    console.log(res.data);
+                                    if(res.data){
+                                      this.setState({
+                                        symbol: '',
+                                        data: res.data[sym],
+                                        symb: symb,
+                                        dcf: dcf,
+                                        showData: true,
+                                        error: false,
+                                        print: false
+                                      })
+                                    }
+                                    else{
+                                      this.setState({
+                                        symbol: '',
+                                        data: "DATA NOT AVAILABLE",
+                                        symb: symb,
+                                        dcf: dcf,
+                                        showData: true,
+                                        error: true,
+                                        print:false
+                                      })
+                                    }
+                                  })
+                                  .catch(err => {
+                                    this.setState({
+                                      symbol: '',
+                                      dcf: dcf,
+                                      symb: symb,
+                                      data: "DATA NOT AVAILABLE",
+                                      showData: true,
+                                      error: true,
+                                      print:false
+                                    })
+                                  });
+                                console.log("DCF is   "+dcf);
                             })
                             .catch(err=>{
                                 console.log('Error !!!');
@@ -123,16 +157,12 @@ axios.get(url)
                         console.log('Error !!!');
                     })
             })
-            .catch(err=>{
-                console.log('Error !!!');
-            })
-
         if(res.data.status==='OK'){
           this.setState({
-            symbol:'',
+            symbol: '',
             showData: true,
+            dcf:'',
             error: false,
-            dcf: '',
             print: false
           })
         }
@@ -155,19 +185,21 @@ axios.get(url)
           error: true,
           print:false
         })
-    })
+
+    });
 
   }
   render() {
+    console.log(this.state);
     const dataDisplay=this.state.showData? (
       <div className='container' id='content-area'>
         <center><h2 className='blue lighten-4'>
-          {this.state.symbol}
+          {this.state.symb}
         </h2></center>
         <section>
           <div className="flex-row">
             <h4>  
-              <small className='red-text text-lighten-1'>  Figures in Rs. Crores</small>
+              <small className='red-text text-lighten-1'>  Figures in Rs.</small>
             </h4>
           </div>
           <div className="flex-filler"></div>
@@ -178,6 +210,11 @@ axios.get(url)
                 <tr>
                   <td>DCF stock valuation</td>
                   <td>{this.state.dcf}</td>
+                </tr>
+                <tr>
+                  <td>Stock Price Prediction </td>
+                  <td>{this.state.data}</td>
+
                 </tr>
               </tbody>
             </table>
