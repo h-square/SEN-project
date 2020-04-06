@@ -45,6 +45,16 @@ router.get('/', (req, res) => {
                 });
             });
         }
+    })
+    .catch(err => {
+        console.log('Watchlist Get failed:', err);
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.internal,
+            errors: [
+                {msg: 'Unexpected Error', error: err}
+            ]
+        });
     });
 });
 
@@ -116,6 +126,16 @@ router.post('/add', (req, res) => {
                 });
             });
         }
+    })
+    .catch(err => {
+        console.log('Watchlist Add failed:', err);
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.internal,
+            errors: [
+                {msg: 'Unexpected Error', error: err}
+            ]
+        });
     });
 });
 
@@ -188,6 +208,16 @@ router.post('/remove', (req, res) => {
                 });
             });
         }
+    })
+    .catch(err => {
+        console.log('Watchlist Remove failed:', err);
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.internal,
+            errors: [
+                {msg: 'Unexpected Error', error: err}
+            ]
+        });
     });
 });
 
