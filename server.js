@@ -55,6 +55,9 @@ app.use('/api/exists', require('./routes/api/exist'));
 // watchlist
 app.use('/user/watchlist', protect, require('./routes/user/watchlist'));
 
+// portfolio
+app.use('/user/portfolio', protect, require('./routes/user/portfolio'));
+
 // start listening
 const PORT = process.env.PORT || config.servPort;
 
