@@ -513,7 +513,7 @@ router.post('/edit', (req, res) => {
         })
     })
     .catch(err => {
-        console.log('Portfolio add failed:', err);
+        console.log('Portfolio Modify failed:', err);
         res.json({
             status: config.statusCodes.failed,
             errorType: config.errorCodes.internal,
