@@ -8,9 +8,8 @@ import Reports from './pages/reports/Reports';
 import CookieTest from './pages/cookietest/Cookietest'
 import Login from './pages/user/Login';
 import UserHome from './pages/user/UserHome';
-import Watchlist from './pages/watchlist/Watchlist';
-import Dcf from './pages/dcf/Dcf';
-
+import Peer_comp from './pages/peer-comp/Peer_comp';
+import Support from './pages/Help_page/Support'
 class App extends Component {
   render() {
     const App = () => (
@@ -23,8 +22,8 @@ class App extends Component {
           <Route path='/cookietest' component={CookieTest}/>
           <Route path='/login' component={Login}/>
           <Route path='/user/home' component={UserHome}/>
-          <Route path='/user/watchlist' component={Watchlist}/>
-          <Route path='/dcf' component={Dcf}/>
+          <Route path='/peercomp' component={Peer_comp}/>
+          <Route path='/support' component={Support}/>
         </Switch>
       </div>
     )

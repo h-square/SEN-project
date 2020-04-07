@@ -1,10 +1,34 @@
 import React from 'react';
 import { Component } from 'react';
 import axios from 'axios';
-import Loading from '../../images/Loading.gif';
+import Loading from '../../Images/Loading.gif';
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import red from '@material-ui/core/colors/red';
+import Typography from '@material-ui/core/Typography';
+import { spacing } from '@material-ui/system';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Header from '../../Header'
+import './Reports.css'
+
+const primary = red[500];
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
+}));
 
 class Reports extends Component {
-
   constructor() {
     super();
     this.state = {
@@ -32,7 +56,7 @@ class Reports extends Component {
       print: true
     })
     var sym=this.state.symbol.toUpperCase()
-    axios.get(`/api/report/${sym}-${this.state.year}`)
+    axios.get(`https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/${sym}-${this.state.year}`)
       .then(res => {
         //console.log(res.data);
         if(res.data.status==='OK'){
@@ -70,211 +94,257 @@ class Reports extends Component {
     // let dataMarkUp = this.state.data ? (
     //   this.state.data.map(dataitem => <div> {dataitem}</div>))
     //   : (<p> loading.. </p>)
+    const StyledTableCell = withStyles((theme) => ({
+      head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+      },
+      body: {
+        fontSize: 14,
+      },
+    }))(TableCell);
+    
+    const StyledTableRow = withStyles((theme) => ({
+      root: {
+        '&:nth-of-type(odd)': {
+          backgroundColor: theme.palette.background.default,
+        },
+      },
+    }))(TableRow);
+
     const dataDisplay=this.state.showData? (
       //console.log(this.state.data),
       <div className='container' id='content-area'>
-        <center><h2 className='red lighten-2'>
+        <br/>
+        <center><Typography variant ='h4' className='red lighten-2' color='error'>
           {this.state.data.symbol} {this.state.data.year}
-        </h2></center>
+        </Typography></center>
         <section id="profit-loss">
           <div className="flex-row">
-            <h4>
+            <Typography variant='h4' color='primary'>
               Profit and Loss
-              <small className='light-blue-text text-lighten-3'>  Figures in Rs. Crores</small>
-            </h4>
+              <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+            </Typography>
           </div>
           <div className="flex-filler"></div>
-          <div className="responsive holder" data-result-table>
-            <table className='striped responsive-text-nowrap'>
-              
-              <tbody>
-                <tr className='stripe highlight'>
-                  <td>Sales</td>
-                  <td>{this.state.data.income_statement['Revenue']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Sales Growth%</td>
-                  <td>{Math.round((this.state.data.income_statement['Revenue Growth']+Number.EPSILON)*10000)/10000}%</td>
-                </tr>
-                <tr>
-                  <td>Net Expenses</td>
-                  <td>{(this.state.data.income_statement['R&D Expenses']+this.state.data.income_statement['SG&A Expense']+this.state.data.income_statement['Operating Expenses']+this.state.data.income_statement['Interest Expense']+this.state.data.income_statement['Income Tax Expense'])/10000000}</td>
-                </tr>
-                <tr>
-                  <td>R&D Expenses</td>
-                  <td>{this.state.data.income_statement['R&D Expenses']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>SG&A Expenses</td>
-                  <td>{this.state.data.income_statement['SG&A Expense']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Operating Expenses</td>
-                  <td>{this.state.data.income_statement['Operating Expenses']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Interest Expenses</td>
-                  <td>{this.state.data.income_statement['Interest Expense']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Income Tax Expenses</td>
-                  <td>{this.state.data.income_statement['Income Tax Expense']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Operating Profit</td>
-                  <td>{this.state.data.income_statement['Operating Income']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Profit before Tax</td>
-                  <td>{this.state.data.income_statement['Earnings before Tax']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Net Profit</td>
-                  <td>{this.state.data.income_statement['Net Income']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Profit Margin</td>
-                  <td>{Math.round((this.state.data.income_statement['Profit Margin']+Number.EPSILON)*10000)/10000}</td>
-                </tr>
-                <tr>
-                  <td>EPS in Rs.</td>
-                  <td>{this.state.data.income_statement['EPS']}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <TableContainer component={Paper} className="responsive holder" data-result-table>
+            <Table className='striped responsive-text-nowrap' aria-label='simple table'>
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>--</StyledTableCell>
+                  <StyledTableCell>--</StyledTableCell>
+                  
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                <StyledTableRow className='stripe highlight'>
+                  <StyledTableCell >Sales</StyledTableCell>
+                  <StyledTableCell >{this.state.data.income_statement['Revenue']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell >Sales Growth%</StyledTableCell>
+                  <StyledTableCell >{Math.round((this.state.data.income_statement['Revenue Growth']+Number.EPSILON)*10000)/10000}%</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell >Net Expenses</StyledTableCell>
+                  <StyledTableCell >{(this.state.data.income_statement['R&D Expenses']+this.state.data.income_statement['SG&A Expense']+this.state.data.income_statement['Operating Expenses']+this.state.data.income_statement['Interest Expense']+this.state.data.income_statement['Income Tax Expense'])/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>R&D Expenses</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['R&D Expenses']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>SG&A Expenses</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['SG&A Expense']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Operating Expenses</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['Operating Expenses']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Interest Expenses</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['Interest Expense']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Income Tax Expenses</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['Income Tax Expense']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Operating Profit</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['Operating Income']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Profit before Tax</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['Earnings before Tax']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Net Profit</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['Net Income']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Profit Margin</StyledTableCell>
+                  <StyledTableCell>{Math.round((this.state.data.income_statement['Profit Margin']+Number.EPSILON)*10000)/10000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>EPS in Rs.</StyledTableCell>
+                  <StyledTableCell>{this.state.data.income_statement['EPS']}</StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </section>
         <br/>
         <br/>
         <section id='balance-sheet'>
           <div className="flex-row">
-            <h4>
+          <Typography variant='h4' color='primary'>
               Balance Sheet
-              <small className='light-blue-text text-lighten-3'>  Figures in Rs. Crores</small>
-            </h4>
+              <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+            </Typography>
           </div>
-          <div className="responsive holder" data-result-table>
-            <table className='striped'>
-              <tbody>
-                <tr>
-                  <td>Total Shareholders Equity</td>
-                  <td>{this.state.data.balance_statement['Total shareholders equity']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Receivables</td>
-                  <td>{this.state.data.balance_statement['Receivables']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Inventories</td>
-                  <td>{this.state.data.balance_statement['Inventories']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Tax Liabilities</td>
-                  <td>{this.state.data.balance_statement['Tax Liabilities']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Total Liabilities</td>
-                  <td>{this.state.data.balance_statement['Total liabilities']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Short-Term Investments</td>
-                  <td>{this.state.data.balance_statement['Short-term investments']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Long-Term Investments</td>
-                  <td>{this.state.data.balance_statement['Long-term investments']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Investments</td>
-                  <td>{this.state.data.balance_statement['Investments']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Cash Equivalants</td>
-                  <td>{this.state.data.balance_statement['Cash and cash equivalents']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Goodwill and Intangible Assets</td>
-                  <td>{this.state.data.balance_statement['Goodwill and Intangible Assets']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Total Assets</td>
-                  <td>{this.state.data.balance_statement['Total assets']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Short Term Debt</td>
-                  <td>{this.state.data.balance_statement['Short-term debt']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Long Term Debt</td>
-                  <td>{this.state.data.balance_statement['Long-term debt']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Net Debt</td>
-                  <td>{this.state.data.balance_statement['Net Debt']/10000000}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <TableContainer component={Paper} className="responsive holder" data-result-table>
+            <Table className='striped'>
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>--</StyledTableCell>
+                  <StyledTableCell>--</StyledTableCell>
+                  
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell>Total Shareholders Equity</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Total shareholders equity']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Receivables</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Receivables']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Inventories</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Inventories']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Tax Liabilities</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Tax Liabilities']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Total Liabilities</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Total liabilities']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Short-Term Investments</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Short-term investments']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Long-Term Investments</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Long-term investments']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Investments</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Investments']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Cash Equivalants</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Cash and cash equivalents']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Goodwill and Intangible Assets</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Goodwill and Intangible Assets']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Total Assets</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Total assets']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Short Term Debt</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Short-term debt']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Long Term Debt</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Long-term debt']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Net Debt</StyledTableCell>
+                  <StyledTableCell>{this.state.data.balance_statement['Net Debt']/10000000}</StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </section>
         <br/>
         <br/>
         <section id='cash-flows'>
           <div className="flex-row">
-            <h4>
+            <Typography variant='h4' color='primary'>
               Cash Flows
-              <small className='light-blue-text text-lighten-3'>  Figures in Rs. Crores</small>
-            </h4>
+              <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+            </Typography>
           </div>
-          <div className="responsive holder" data-result-table>
-            <table className='striped'>
-              <tbody>
-                <tr>
-                  <td>Cash from Operating Activity</td>
-                  <td>{this.state.data.cash_statement['Operating Cash Flow']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Cash from Investing Activity</td>
-                  <td>{this.state.data.cash_statement['Investing Cash flow']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Cash from Financial Activity</td>
-                  <td>{this.state.data.cash_statement['Financing Cash Flow']/10000000}</td>
-                </tr>
-                <tr>
-                  <td>Net Cash Flow</td>
-                  <td>{this.state.data.cash_statement['Net cash flow / Change in cash']/10000000}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <TableContainer component={Paper} className="responsive holder" data-result-table>
+            <Table className='striped'>
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>--</StyledTableCell>
+                  <StyledTableCell>--</StyledTableCell>
+                  
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell>Cash from Operating Activity</StyledTableCell>
+                  <StyledTableCell>{this.state.data.cash_statement['Operating Cash Flow']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Cash from Investing Activity</StyledTableCell>
+                  <StyledTableCell>{this.state.data.cash_statement['Investing Cash flow']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Cash from Financial Activity</StyledTableCell>
+                  <StyledTableCell>{this.state.data.cash_statement['Financing Cash Flow']/10000000}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Net Cash Flow</StyledTableCell>
+                  <StyledTableCell>{this.state.data.cash_statement['Net cash flow / Change in cash']/10000000}</StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </section>
         <br/>
         <br/>
         <section id='ratios'>
           <div className="flex-row">
-            <h4>
+            <Typography variant='h4' color='primary'>
               Ratios
-              <small className='light-blue-text text-lighten-3'>  Figures in Rs. Crores</small>
-            </h4>
+              <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+            </Typography>
           </div>
-          <div className="responsive holder" data-result-table>
-            <table className='striped'>
-              <tbody>
-                <tr>
-                  <td>ROCE%</td>
-                  <td>{Math.round((this.state.data.income_statement['EBIT']/(this.state.data.balance_statement['Total assets']-this.state.data.balance_statement['Total current liabilities']))*10000)/100}%</td>
-                </tr>
-                <tr>
-                  <td>Debter Days</td>
-                  <td>{Math.round((this.state.data.balance_statement['Receivables']/this.state.data.income_statement['Revenue'])*365*10000)/100}</td>
-                </tr>
-                <tr>
-                  <td>ROE%</td>
-                  <td>{Math.round((this.state.data.income_statement['Net Income']/(this.state.data.balance_statement['Total shareholders equity']))*10000)/100}%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <TableContainer component={Paper} className="responsive holder" data-result-table>
+            <Table className='striped'>
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>--</StyledTableCell>
+                  <StyledTableCell>--</StyledTableCell>
+                  
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell>ROCE%</StyledTableCell>
+                  <StyledTableCell>{Math.round((this.state.data.income_statement['EBIT']/(this.state.data.balance_statement['Total assets']-this.state.data.balance_statement['Total current liabilities']))*10000)/100}%</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Debter Days</StyledTableCell>
+                  <StyledTableCell>{Math.round((this.state.data.balance_statement['Receivables']/this.state.data.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>ROE%</StyledTableCell>
+                  <StyledTableCell>{Math.round((this.state.data.income_statement['Net Income']/(this.state.data.balance_statement['Total shareholders equity']))*10000)/100}%</StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </section>
       </div>
     ):(
@@ -288,18 +358,19 @@ class Reports extends Component {
       ):(
           this.state.error?(
             <div>
-              <center><h5 className='red-text'>Enter valid input!</h5></center>
-              <h5>Check following details:</h5>
+              <Typography color='error' variant='h4' align='center'>Enter valid input!</Typography>
+              <Typography variant='h4'>Check following details:</Typography>
               <ul className='collection'>
-                <li className='collection-item'>Check whether the ticker symbol you have entered is valid or not</li>
-                <li className='collection-item'>Check whether the year you have entered is valid or not!</li>
+                <li className='collection-item'><Typography variant='h6'>Check whether the ticker symbol you have entered is valid or not</Typography></li>
+                <li className='collection-item'><Typography variant='h6'>Check whether the year you have entered is valid or not!</Typography></li>
               </ul>
-              <h5>If you think this is a mistake then email us at <small className='blue-text'>smap.help@gmail.com</small></h5>
+              <Typography variant='h6'>If you think this is a mistake then email us at <Typography color='primary' variant='caption' className='blue-text'>smap.help@gmail.com</Typography></Typography>
             </div>
           ):(
           
             <div>
-              <h5><center className=''>Access the Annual reports by just one click!  </center></h5>
+              <br/>
+              <Typography align='center' variant='h5'>Access the Annual reports by just one click!</Typography>
             </div>
           )
       )
@@ -311,25 +382,39 @@ class Reports extends Component {
     <h3>{this.state.data.symbol} and {this.state.data.year}</h3>
     ) : <p>loading...</p>*/
     return (
-      <div>
-        <center><h3>Annual Report</h3></center>
+      <div className='reports'>
+        <Header/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <Typography align='center' color='primary' variant='h3'>
+           Annual Report
+        </Typography>
+        <br/>
         <div className='row'>
-          <form className='col s12'>
-            <div className='row'>
-              <div className='input-field col s6'>              
-                <h5 className="blue-text">Ticker Symbol</h5>
-                <input id='input_text' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
-              </div>
-              <div className='input-field col s6'>   
-                <h5 className="blue-text">Year</h5>
-                <input type='text' name='year' onChange={this.handleChange} value={this.state.year} maxLength='4'/>
+          <form>
+            <div className='form-row'>
+              <div className='stock-detail'>
+                <div className='form-group'>
+                  <label className='form-label'>Ticker Symbol:</label>
+                  <input className='form-input' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
+                </div>
+                <div className='form-group'>
+                  <label className='form-label'>Year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                  <input className='form-input' type='text' name='year' onChange={this.handleChange} value={this.state.year} maxLength='4' />
+                </div>
               </div>
             </div>
-            <center><button className="btn waves-effect waves-light" type="submit" name="action" onClick={this.handleSubmit}>
+            <div className='form-row'>
+            <center><Button align='center' variant="contained" color="primary" type="submit" name="action" onClick={this.handleSubmit}>
                 Submit
-            </button></center>
+            </Button></center>
+            </div>
           </form>
         </div>
+        
         {dataDisplay}
       </div>
     )

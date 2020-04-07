@@ -1,7 +1,8 @@
 import React, { useState, Fragment, Component } from "react";
 import ReactDOM from "react-dom";
-import CanvasJSChart from './canvasjs.react';
 import payoff from './payoff'
+import './option.css'
+import Header from '../../Header'
 //var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 
@@ -9,12 +10,10 @@ import payoff from './payoff'
 
 const Optsim = () => {
 
-
 //class Optsim extends Component {
 
   const [errors,seterrors] = useState([]);
   const [errors1,seterrors1] = useState([]);
-  const [errors11,seterrors11] = useState([]);
   const [errors2,seterrors2] = useState([]);
   const [errors3,seterrors3] = useState([]);
 
@@ -53,7 +52,8 @@ const Optsim = () => {
   };
 
   const handleRemoveFields = index => {
-    if([...inputFields].length > 1)
+
+    if(index > 0)
     {
       const values = [...inputFields];
       values.splice(index, 1);
@@ -77,10 +77,9 @@ const Optsim = () => {
         setbs(event.target.value)
     }
 
-    
+    const temp_error = [];
     if(event.target.name === "strikePrice")
     {
-      const temp_error = [];
       if(event.target.value === '')
       {
         temp_error.push("Enter a valid strike price for option" + index + "!");
@@ -96,30 +95,26 @@ const Optsim = () => {
           temp_error.push("Strike price must be a positive number for option" + index + "!");
         }
       }
-      seterrors1(temp_error);
     }
     else if(event.target.name === "optionPrice")
     {
-      const temp_error1 = [];
       if(event.target.value === '')
       {
-        temp_error1.push("Enter a valid option price for option" + index + "!");
+        temp_error.push("Enter a valid option price for option" + index + "!");
       }
       else if (event.target.value !== '')
       {
         if(!Number(event.target.value)) 
         {
-        temp_error1.push("Option Price must be a number for option" + index + "!");
+        temp_error.push("Option Price must be a number for option" + index + "!");
         }
         else if(event.target.value < 0)
         {
-          temp_error1.push("Option price must be a positive number for option" + index + "!");
+          temp_error.push("Option price must be a positive number for option" + index + "!");
         }
       }
-      seterrors11(temp_error1);
     }
-    //seterrors1(temp_error);
-    //seterrors11(temp_error1);
+    seterrors1(temp_error);
     setInputFields(values);
   };
 
@@ -165,13 +160,11 @@ const Optsim = () => {
 
     seterrors2(temp_error);
     if (event.target.name === "startPrice") {
-        const v1 = (event.target.value).trim();
-        setstartPrice(v1);
+        setstartPrice(event.target.value);
     }
     else if (event.target.name === "endPrice")
     {
-        const v2 = (event.target.value).trim();
-        setendPrice(v2);
+        setendPrice(event.target.value);
     }
   };
 
@@ -193,15 +186,11 @@ const Optsim = () => {
     //let error1 = validate1(inputFields.strikePrice,inputFields.optionPrice);
     console.log("Returned error0", error0)
     //console.log("Returned error1", error1)
-    seterrors(error0);
     if (error0.length > 0) {
+      seterrors(error0);
       return;
     }
     else if(errors1.length > 0)
-    {
-      return;
-    }
-    else if(errors11.length > 0)
     {
       return;
     }
@@ -233,37 +222,34 @@ const Optsim = () => {
     console.log("Error state2",errors2)
     // End of checking input fields
     var ans = []
-    //const v1 = parseFloat(startPrice.trim())
-    //const v2 = parseFloat(endPrice.trim())
-    //setstartPrice(v1)
-    //setendPrice(v2)
+
     for(let i=0;i<(endPrice-startPrice+1);i++)
     {
         ans[i]=0;
     }
-    console.log("New end price",endPrice)
+
     for(let price=startPrice;price<=endPrice;price++)
     {
         for(let option=0;option<[...inputFields].length;option++)
         {
             if(inputFields[option].optionType === "call")
             {
-              if(inputFields[option].buySell == 'buy')
+              if(inputFields[option].buySell === 'buy')
               {
                 ans[price-startPrice]+=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell == 'sell')
+              else if(inputFields[option].buySell === 'sell')
               {
                 ans[price-startPrice]-=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
             }
-            if(inputFields[option].optionType == 'put')
+            if(inputFields[option].optionType === 'put')
             {
-              if(inputFields[option].buySell == 'buy')
+              if(inputFields[option].buySell === 'buy')
               {
                 ans[price-startPrice]+=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell == 'sell')
+              else if(inputFields[option].buySell === 'sell')
               {
                 ans[price-startPrice]-=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
@@ -312,143 +298,169 @@ const Optsim = () => {
 
   //render(){
   return (
-    <>
-      <center>
-      <h1>Option Simulator</h1>
+    <body class="option">
+      <Header/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <h1 class="header">Option Simulator</h1>
       <form onSubmit={handleSubmit}>
-      {errors.map(error => (
-          <h3 style={{color: "red"}} key={error}>Error: {error}</h3>
-        ))}
-        {errors1.map(error1 => (
-          <h3 style={{color: "red"}} key={error1}>Error: {error1}</h3>
-        ))}
-        {errors11.map(error11 => (
-          <h3 style={{color: "red"}} key={error11}>Error: {error11}</h3>
-        ))}
-        {errors2.map(error2 => (
-          <h3 style={{color: "red"}} key={error2}>Error: {error2}</h3>
-        ))}
-        {errors3.map(error3 => (
-          <h3 style={{color: "red"}} key={error3}>Error: {error3}</h3>
-        ))}
-        <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
-        <h3>Enter range of stock prices for simulation:</h3>
+
+        <h3 class="h3-text">Enter range of stock prices for simulation:</h3>
         <div className="form-row">
-            <div className="form-group col-sm-12">
-                    <label htmlFor="startPrice">Start Price</label>
-                    <input //ref={st_prInput => this._st_prInput}
-                    type='text'
-                    className="form-control"
-                    id="startPrice"
-                    name="startPrice"
-                    //value={startPrice}
-                    onChange={event => handleInputPricesChange(event)}
-                    />
-              </div>
-              <div className="form-group col-sm-10">
-                    <label htmlFor="endPrice">End Price</label>
+            <div class="stock-detail">
+                <div className="form-group ">
+                  <label class="form-label" htmlFor="startPrice">Start Price :</label>
+                  <input //ref={st_prInput => this._st_prInput}
+                  type='text'
+                  className="form-input"
+                  id="startPrice"
+                  name="startPrice"
+                  placeholder="Enter value"
+                  //value={startPrice}
+                  onChange={event => handleInputPricesChange(event)}
+                  />
+                </div>
+              <div className="form-group">
+                    <label class="form-label" htmlFor="endPrice">End Price &nbsp;&nbsp;:</label>
                     <input //ref={en_prInput => this._en_prInput}
                     type='text'
-                    className="form-control"
+                    className="form-input"
                     id="endPrice"
                     name="endPrice"
+                    placeholder="Enter value"
                     //value={endPrice}
                     onChange={event => handleInputPricesChange(event)}
                     />
               </div>
-              <br></br>
-              <h3>Enter option details:</h3>
+            </div>
+
+            <h3 class="h3-text">Enter Option Details:</h3>
+ 
           {inputFields.map((inputField, index) => (
             <Fragment key={`${inputField}~${index}`}>
-              <div className="form-group col-sm-8">
-                <label htmlFor="strikePrice">Strike Price</label>
+              <div class="option-detail">
+              <div className="form-group">
+                <label class="form-label" htmlFor="strikePrice">Strike Price&nbsp;&nbsp;&nbsp;:</label>
                 <input //ref={strike_prInput => this._strike_prInput}
                   type='text'
-                  className="form-control"
+                  className="form-input"
                   id="strikePrice"
                   name="strikePrice"
-                  value={inputFields[index].strikePrice}
+                  placeholder="Enter value"
+                  //value={inputField.firstName}
                   onChange={event => handleInputChange(index, event)}
                 />
               </div>
 
-              <div className="form-group col-sm-6" onChange={event => handleInputChange(index, event)}>
-                <label htmlFor="optionType">Option Type  </label>
-                <label>
-                <input type="radio" className="form-control" 
+              <div className="form-group" onChange={event => handleInputChange(index, event)}>
+                <label class="form-label" htmlFor="optionType">Option Type&nbsp;: </label>
+                <label class="form-label-for-radio">
+                <input type="radio" className="form-input-for-radio" 
                   id="optionType" value="call" defaultChecked name="optionType" />
                   Call
                 </label>
-                <label>
-                <input type="radio" className="form-control" 
+                <label class="form-label-for-radio">
+                <input type="radio" className="form-input-for-radio" 
                   id="optionType" value="put" name="optionType" />
                   Put
                 </label>
-                <p> Selected type: {inputFields[index].optionType} </p>
               </div>
-
-              <div className="form-group col-sm-4">
-                <label htmlFor="optionPrice">Option Price</label>
+              
+              <div className="form-group">
+                <label htmlFor="optionPrice" class="form-label">Option Price&nbsp;:</label>
                 <input //ref={opt_prInput => this._opt_prInput}
                   type='text' 
-                  className="form-control" 
+                  className="form-input" 
                   id="optionPrice"
                   name="optionPrice"
-                  value={inputFields[index].optionPrice}
+                  placeholder="Enter value"
+                  //value={inputField.lastName}
                   onChange={event => handleInputChange(index, event)}
                 />
               </div>
-              <div className="form-group col-sm-2" onChange={event => handleInputChange(index, event)}>
-                <label htmlFor="buySell">Buy/Sell </label>
-                <label>
-                <input type="radio" className="form-control" 
-                  id="buySell" value="buy" defaultChecked name="buySell" />
+
+
+              <div className="form-group" onChange={event => handleInputChange(index, event)}>
+                <label htmlFor="buySell" class="form-label">Buy/Sell &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                <label class="form-label-for-radio">
+                <input type="radio" className="form-input-for-radio" 
+                  id="buySell" value="buy" defaultChecked name="buySell"  />
                   Buy
                 </label>
-                <label>
-                <input type="radio" className="form-control" 
+                <label class="form-label-for-radio">
+                <input type="radio" className="form-input-for-radio" 
                   id="buySell" value="sell" name="buySell" />
                   Sell
                 </label>
-                <p> Selected type: {inputFields[index].buySell} </p>
-              </div>
-                <div className="form-group col-sm-1">
+               </div>
+               
+              <div className="form-group">
                 <button
-                  className="btn btn-link"
+                  className="form-btn"
                   type="button"
                   onClick={() => handleRemoveFields(index)}
                 >
-                  -
+                  Remove
                 </button>
-
                 <button
-                  className="btn btn-link"
+                  className="form-btn"
                   type="button"
                   onClick={() => handleAddFields()}
                 >
-                  +
+                  Add
                 </button>
-                </div>
+              </div>
+              </div>
             </Fragment>
           ))}
         </div>
-        <div className="submit-button">
+        
+        <div className="form-group">
+          <center>
           <button
             id = "submit"
-            className="btn btn-primary mr-2"
+            className="option-submit"
             type="submit"
             onSubmit={handleSubmit}
           >
             Save
-          </button>
+          </button></center>
         </div>
+      
+        
+        {errors.map(error => (
+          <div>
+          <h3 style={{color: "red"}} key={error}>Error: {error}</h3>
+          <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
+          </div>
+        ))}
+        {errors1.map(error1 => (
+          <div>
+          <h3 style={{color: "red"}} key={error1}>Error: {error1}</h3>
+          <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
+          </div>
+        ))}
+        {errors2.map(error2 => (
+          <div>
+          <h3 style={{color: "red"}} key={error2}>Error: {error2}</h3>
+          <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
+          </div>
+        ))}
+        {errors3.map(error3 => (
+          <div>
+          <h3 style={{color: "red"}} key={error3}>Error: {error3}</h3>
+          <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
+          </div>
+        ))}
         <br/>
       </form>
-      <div id = "chart">
+      <div id = "chart" class="chart">
       
       </div>
-      </center>
-    </>
+    </body>
   );
     //      }
 };

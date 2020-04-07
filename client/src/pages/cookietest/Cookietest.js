@@ -1,7 +1,7 @@
 var React = require('react');
 var Component = React.Component;
 var qs = require('querystring');
-var axios = require('axios');
+//var axios = require('axios');
 
 class CookieTest extends Component {
 

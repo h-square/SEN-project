@@ -13,7 +13,7 @@ CanvasJS.addColorSet("colors",["#0000FF","#DC143C","#7FFF00","#FF69B4","#006400"
 class ChartDrawer extends Component {
     
     handleChange = (e) =>{
-        if(stock_exists==true)
+        if(stock_exists===true)
         {
             console.log(e.target.checked)
             if(e.target.checked)

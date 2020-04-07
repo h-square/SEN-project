@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import Header from '../../Header';
 
 const qs = require('querystring');
 
@@ -13,6 +15,8 @@ class Login extends Component {
         formTitle: 'Login',
         loginBtn: true,
         errors: '',
+        redirectionToUserHome: false,
+        redirectionTologin: false
     }
 
     constructor(props){
@@ -41,11 +45,23 @@ class Login extends Component {
             console.log(res);
             if(res.status === "OK"){
                 console.log("redirection turned on!");
-                this.state.redirectionToUserHome = true;
-                this.state.errors = false;
+                //this.state.redirectionToUserHome = true;
+                //this.state.errors = false;
+                this.setState({
+                    redirectionToUserHome:true,
+                    redirectionTologin: false,
+                    errors:false
+                })
+                
+                this.props.history.push('/')
             } else {
-                this.state.redirectionToUserHome = false;
-                this.state.errors = res.status;
+                //this.state.redirectionToUserHome = false;
+                //this.state.errors = res.status;
+                this.setState({
+                    redirectionToUserHome:false,
+                    redirectionTologin: false,
+                    errors:res.status
+                })
             }
             this.forceUpdate();
         })
@@ -77,11 +93,27 @@ class Login extends Component {
             console.log(res);
             if(res.status === "OK"){
                 console.log("redirection turned on!");
-                this.state.redirectionToUserHome = true;
-                this.state.errors = false;
+                //this.state.redirectionToUserHome = true;
+                //this.state.errors = false;
+                this.setState({
+                    redirectionTologin:true,
+                    redirectionToUserHome: false,
+                    errors:false,
+                    loginBtn:true,
+                    name: '',
+                    email: '',
+                    password: '',
+                    password2: ''
+                })
+                this.props.history.push('/login')
             } else {
-                this.state.redirectionToUserHome = false;
-                this.state.errors = res.errors[0].msg;
+                //this.state.redirectionToUserHome = false;
+                //this.state.errors = res.errors[0].msg;
+                this.setState({
+                    redirectionToUserHome:false,
+                    redirectionTologin:false,
+                    errors:res.errors[0].msg
+                })
             }
             this.forceUpdate();
         })
@@ -105,69 +137,111 @@ class Login extends Component {
     }
 
     render(){
-
+        
         let submitBtn = this.state.loginBtn ? 
-            (<input className="loginBtn" type="submit" onClick={this.login} value="Enter" />) : 
-            (<input className="loginBtn" type="submit" onClick={this.register} value="Register" />);
+            (//<input className="login-submit3" type="submit" onClick={this.login} value="Enter" />
+                <center><Button align='center' variant="contained" color="primary" type="submit" onClick={this.login}>
+                    Login
+                </Button></center>
+                
+            ) : 
+            (//<input className="login-submit2" type="submit" onClick={this.register} value="Register" />
+                <div>
+                    <center><Button align='center' variant="contained" color="primary" type="submit" onClick={this.register}>
+                        SignUp
+                    </Button></center>
+                </div>
+            );
 
         let login_register = this.state.loginBtn ?
-            (<button className="registerBtn" onClick={() => this.getAction('reg')}>Register</button>) : 
-            (<button className="registerBtn" onClick={() => this.getAction('login')}>Login</button>)
+            (<center>
+                <br/>
+                Not a user? &nbsp;&nbsp;
+                <Button align='center' variant="contained" color="primary" type="submit" onClick={() => this.getAction('reg')}>Register</Button>
+            </center>) : 
+            (<div></div>)
 
         let login_from = this.state.loginBtn ?
-            (<><label>E-mail</label><input type="text" 
-            value={this.state.email} 
-            onChange={this.handleChange} 
-            name="email" />
-
-            <label>Password</label><input type="password" 
-            value={this.state.password} 
-            onChange={this.handleChange} 
-            name="password" /></>) : 
+            (<div className='stock-detail'>
+                <div className='form-group'>
+                    <label className='form-label'>E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input className='form-input'type="text" 
+                    value={this.state.email} 
+                    onChange={this.handleChange} 
+                    name="email" 
+                    />
+                </div>
+                <div className='form-group'>
+                    <label className='form-label'>Password&nbsp;:</label><input type="password" 
+                    value={this.state.password} 
+                    onChange={this.handleChange} 
+                    name="password" 
+                    className='form-input'
+                    />
+                </div>
+            </div>) : 
             
-            (<><label>Name</label><input type="text" 
-            value={this.state.name} 
-            onChange={this.handleChange} 
-            name="name" />
+            (<div className='option-detail'>
+                <div className='form-group'>
+                    <label className='form-label'>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="text" 
+                    value={this.state.name} 
+                    onChange={this.handleChange} 
+                    name="name" 
+                    className='form-input'
+                    />
+                </div>
+                <div className='form-group'>
+                    <label className='form-label'>E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="text" 
+                    value={this.state.email} 
+                    onChange={this.handleChange} 
+                    name="email" 
+                    className='form-input'/>
+                </div>
+                <div className='form-group'>
+                    <label className='form-label'>Password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="password" 
+                    value={this.state.password} 
+                    onChange={this.handleChange} 
+                    name="password" 
+                    className='form-input'/>
+                </div>
+                <div className='form-group'>
+                    <label className='form-label'>Re-Password&nbsp;&nbsp;:</label><input type="password" 
+                    value={this.state.password2} 
+                    onChange={this.handleChange} 
+                    name="password2"
+                    className='form-input' 
+                    />
+                </div>
+            </div>);
 
-            <label>E-mail</label><input type="text" 
-            value={this.state.email} 
-            onChange={this.handleChange} 
-            name="email" />
 
-            <label>Password</label><input type="password" 
-            value={this.state.password} 
-            onChange={this.handleChange} 
-            name="password" />
-            
-
-            <label>Re-enter Password</label><input type="password" 
-            value={this.state.password2} 
-            onChange={this.handleChange} 
-            name="password2" />
-            </>);
-
-
-        let redirectButton = this.state.redirectionToUserHome ?
-            (<Link to={"./user/home"}><button variant="raised">Correct credentials, click to go to your home!</button></Link>):null;
+        let redirectButton = this.state.redirectionTologin ?
+            (<center><h4 style={{color:'green'}}>Registered successfully!</h4></center>):null;
         let error_notification = this.state.errors ? 
             (<h2>{this.state.errors}</h2>) : null;
 
         return(
             <div className="form_block">
-                <div id="title">{this.state.formTitle}</div>
-                <div className="body">
+                <Header/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    {redirectButton}
                     <form>
-                        {login_from}
-
-                        {submitBtn}
+                        <div className="form-row">
+                            {login_from}
+                            
+                            <div className='form-group'>
+                                {submitBtn}
+                            </div>
+                        </div>
                     </form>
                     {login_register}
                 </div>
-
-                <br>
-                </br>
-                {redirectButton}
+                <br/>
+                
                 {error_notification}
             </div>
            

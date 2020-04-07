@@ -24,7 +24,10 @@ class UserHome extends Component{
             return data.user;
         })
         .then(user => {
-            this.state.user = user;
+            //this.state.user = user;
+            this.setState({
+                user:user
+            })
             console.log(user);
             this.forceUpdate();
         })
@@ -45,10 +48,17 @@ class UserHome extends Component{
         .then(res => {
             console.log(res);
             if(res.status === "OK"){
-                this.state.loggedout = true;
-                this.state.user = null;
+                //this.state.loggedout = true;
+                //this.state.user = null;
+                this.setState({
+                    loggedout:true,
+                    user:null
+                })
             } else {
-                this.state.loggedout = false;
+                //this.state.loggedout = false;
+                this.setState({
+                    loggedout:false
+                })
             }
             this.forceUpdate();
         })
