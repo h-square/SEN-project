@@ -10,6 +10,7 @@ const protect = require('./auth/protect');
 // setting up the server 
 app = express();
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private'); 
     next();
@@ -54,6 +55,9 @@ app.use('/api/exists', require('./routes/api/exist'));
 
 // watchlist
 app.use('/user/watchlist', protect, require('./routes/user/watchlist'));
+
+// portfolio
+app.use('/user/portfolio', protect, require('./routes/user/portfolio'));
 
 // start listening
 const PORT = process.env.PORT || config.servPort;
