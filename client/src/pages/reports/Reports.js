@@ -46,7 +46,7 @@ class Reports extends Component {
       print: true
     })
     var sym=this.state.symbol.toUpperCase()
-    axios.get(`https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/${sym}-${this.state.year}`)
+    axios.get(`/api/report/${sym}-${this.state.year}`)
       .then(res => {
         //console.log(res.data);
         if(res.data.status==='OK'){

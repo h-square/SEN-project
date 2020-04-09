@@ -52,7 +52,7 @@ class Peer_comp extends Component{
         //console.log(this.state)
         var sym1=this.state.symbol1.trim().toUpperCase()
         var sym2=this.state.symbol2.trim().toUpperCase()
-        axios.get(`https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/${sym1}-${this.state.year}`)
+        axios.get(`/api/report/${sym1}-${this.state.year}`)
             .then(res => {
                 console.log(res.data);
                 if(res.data.status==='OK'){
