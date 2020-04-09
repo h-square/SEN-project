@@ -161,26 +161,36 @@ router.post('/add', (req, res) => {
             });
             return;
         } else { // price is absent, bring from quote
-            portfolio.items.push({
-                symbol,
-                quantity
-            });
-            promises.push(quotes.where('symbol', '==', symbol).get()
-            .then(snapshot => {
-                if(snapshot.size != 1){
-                    res.json({ // inconsistent database
-                        status: config.statusCodes.failed,
-                        errorType: config.errorCodes.db,
-                        errors: [
-                            {msg: `Item index ${i} is valid but (none/multiple) quotes`}
-                        ]
-                    });
-                } else { // assign price
-                    snapshot.forEach(doc => {
-                        portfolio.items[i].price = doc.data().price;
-                    });
-                }
-            }));
+            if(!price){
+                portfolio.items.push({
+                    symbol,
+                    quantity
+                });
+                promises.push(quotes.where('symbol', '==', symbol).get()
+                .then(snapshot => {
+                    if(snapshot.size != 1){
+                        res.json({ // inconsistent database
+                            status: config.statusCodes.failed,
+                            errorType: config.errorCodes.db,
+                            errors: [
+                                {msg: `Item index ${i} is valid but (none/multiple) quotes`}
+                            ]
+                        });
+                    } else { // assign price
+                        snapshot.forEach(doc => {
+                            portfolio.items[i].price = doc.data().price;
+                        });
+                    }
+                }));
+            } else {
+                portfolio.items.push({
+                    symbol,
+                    quantity,
+                    price
+                });
+                promises.push('Price was present');
+            }
+            
         }
     }
 
@@ -431,26 +441,35 @@ router.post('/edit', (req, res) => {
             });
             return;
         } else { // price is absent, bring from quote
-            portfolio.items.push({
-                symbol,
-                quantity
-            });
-            promises.push(quotes.where('symbol', '==', symbol).get()
-            .then(snapshot => {
-                if(snapshot.size != 1){
-                    res.json({ // inconsistent database
-                        status: config.statusCodes.failed,
-                        errorType: config.errorCodes.db,
-                        errors: [
-                            {msg: `Item index ${i} is valid but (none/multiple) quotes`}
-                        ]
-                    });
-                } else { // assign price
-                    snapshot.forEach(doc => {
-                        portfolio.items[i].price = doc.data().price;
-                    });
-                }
-            }));
+            if(!price){
+                portfolio.items.push({
+                    symbol,
+                    quantity
+                });
+                promises.push(quotes.where('symbol', '==', symbol).get()
+                .then(snapshot => {
+                    if(snapshot.size != 1){
+                        res.json({ // inconsistent database
+                            status: config.statusCodes.failed,
+                            errorType: config.errorCodes.db,
+                            errors: [
+                                {msg: `Item index ${i} is valid but (none/multiple) quotes`}
+                            ]
+                        });
+                    } else { // assign price
+                        snapshot.forEach(doc => {
+                            portfolio.items[i].price = doc.data().price;
+                        });
+                    }
+                }));
+            } else {
+                portfolio.items.push({
+                    symbol,
+                    quantity,
+                    price
+                });
+                promises.push('Price was present');
+            }
         }
     }
 
