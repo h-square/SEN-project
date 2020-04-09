@@ -87,7 +87,7 @@ class Peer_comp extends Component{
                     same:false
                 })
             });
-        axios.get(`https://cors-anywhere.herokuapp.com/http://ancient-woodland-72246.herokuapp.com/api/report/${sym2}-${this.state.year}`)
+        axios.get(`/api/report/${sym2}-${this.state.year}`)
             .then(res => {
                 console.log(res.data);
                 if(res.data.status==='OK'){
