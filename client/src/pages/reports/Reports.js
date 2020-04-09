@@ -2,31 +2,21 @@ import React from 'react';
 import { Component } from 'react';
 import axios from 'axios';
 import Loading from '../../Images/Loading.gif';
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import red from '@material-ui/core/colors/red';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { spacing } from '@material-ui/system';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Header from '../../Header'
 import './Reports.css'
-
-const primary = red[500];
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& .MuiTextField-root': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-}));
+import { spacing } from '@material-ui/system';
+const theme = {
+  spacing: 8,
+}
 
 class Reports extends Component {
   constructor() {
@@ -129,65 +119,58 @@ class Reports extends Component {
           <div className="flex-filler"></div>
           <TableContainer component={Paper} className="responsive holder" data-result-table>
             <Table className='striped responsive-text-nowrap' aria-label='simple table'>
-              <TableHead>
-                <StyledTableRow>
-                  <StyledTableCell>--</StyledTableCell>
-                  <StyledTableCell>--</StyledTableCell>
-                  
-                </StyledTableRow>
-              </TableHead>
               <TableBody>
                 <StyledTableRow className='stripe highlight'>
-                  <StyledTableCell >Sales</StyledTableCell>
-                  <StyledTableCell >{this.state.data.income_statement['Revenue']/10000000}</StyledTableCell>
+                  <StyledTableCell>Sales</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Revenue']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
-                  <StyledTableCell >Sales Growth%</StyledTableCell>
-                  <StyledTableCell >{Math.round((this.state.data.income_statement['Revenue Growth']+Number.EPSILON)*10000)/10000}%</StyledTableCell>
+                  <StyledTableCell >Sales Growth%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</StyledTableCell>
+                  <StyledTableCell align='left'>{Math.round((this.state.data.income_statement['Revenue Growth']+Number.EPSILON)*10000)/10000}%</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell >Net Expenses</StyledTableCell>
-                  <StyledTableCell >{(this.state.data.income_statement['R&D Expenses']+this.state.data.income_statement['SG&A Expense']+this.state.data.income_statement['Operating Expenses']+this.state.data.income_statement['Interest Expense']+this.state.data.income_statement['Income Tax Expense'])/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{(this.state.data.income_statement['R&D Expenses']+this.state.data.income_statement['SG&A Expense']+this.state.data.income_statement['Operating Expenses']+this.state.data.income_statement['Interest Expense']+this.state.data.income_statement['Income Tax Expense'])/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>R&D Expenses</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['R&D Expenses']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['R&D Expenses']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>SG&A Expenses</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['SG&A Expense']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['SG&A Expense']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Operating Expenses</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['Operating Expenses']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Operating Expenses']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Interest Expenses</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['Interest Expense']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Interest Expense']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
-                  <StyledTableCell>Income Tax Expenses</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['Income Tax Expense']/10000000}</StyledTableCell>
+                  <StyledTableCell >Income Tax Expenses</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Income Tax Expense']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
-                  <StyledTableCell>Operating Profit</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['Operating Income']/10000000}</StyledTableCell>
+                  <StyledTableCell >Operating Profit</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Operating Income']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
-                  <StyledTableCell>Profit before Tax</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['Earnings before Tax']/10000000}</StyledTableCell>
+                  <StyledTableCell >Profit before Tax</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Earnings before Tax']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Net Profit</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['Net Income']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['Net Income']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Profit Margin</StyledTableCell>
-                  <StyledTableCell>{Math.round((this.state.data.income_statement['Profit Margin']+Number.EPSILON)*10000)/10000}</StyledTableCell>
+                  <StyledTableCell align='left'>{Math.round((this.state.data.income_statement['Profit Margin']+Number.EPSILON)*10000)/10000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>EPS in Rs.</StyledTableCell>
-                  <StyledTableCell>{this.state.data.income_statement['EPS']}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.income_statement['EPS']}</StyledTableCell>
                 </StyledTableRow>
               </TableBody>
             </Table>
@@ -204,69 +187,62 @@ class Reports extends Component {
           </div>
           <TableContainer component={Paper} className="responsive holder" data-result-table>
             <Table className='striped'>
-              <TableHead>
-                <StyledTableRow>
-                  <StyledTableCell>--</StyledTableCell>
-                  <StyledTableCell>--</StyledTableCell>
-                  
-                </StyledTableRow>
-              </TableHead>
               <TableBody>
                 <StyledTableRow>
                   <StyledTableCell>Total Shareholders Equity</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Total shareholders equity']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Total shareholders equity']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Receivables</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Receivables']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Receivables']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Inventories</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Inventories']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Inventories']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Tax Liabilities</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Tax Liabilities']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Tax Liabilities']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Total Liabilities</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Total liabilities']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Total liabilities']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Short-Term Investments</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Short-term investments']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Short-term investments']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Long-Term Investments</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Long-term investments']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Long-term investments']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Investments</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Investments']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Investments']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Cash Equivalants</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Cash and cash equivalents']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Cash and cash equivalents']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Goodwill and Intangible Assets</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Goodwill and Intangible Assets']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Goodwill and Intangible Assets']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Total Assets</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Total assets']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Total assets']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Short Term Debt</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Short-term debt']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Short-term debt']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Long Term Debt</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Long-term debt']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Long-term debt']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Net Debt</StyledTableCell>
-                  <StyledTableCell>{this.state.data.balance_statement['Net Debt']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.balance_statement['Net Debt']/10000000}</StyledTableCell>
                 </StyledTableRow>
               </TableBody>
             </Table>
@@ -283,29 +259,22 @@ class Reports extends Component {
           </div>
           <TableContainer component={Paper} className="responsive holder" data-result-table>
             <Table className='striped'>
-              <TableHead>
-                <StyledTableRow>
-                  <StyledTableCell>--</StyledTableCell>
-                  <StyledTableCell>--</StyledTableCell>
-                  
-                </StyledTableRow>
-              </TableHead>
               <TableBody>
                 <StyledTableRow>
-                  <StyledTableCell>Cash from Operating Activity</StyledTableCell>
-                  <StyledTableCell>{this.state.data.cash_statement['Operating Cash Flow']/10000000}</StyledTableCell>
+                  <StyledTableCell>Cash from Operating Activity&nbsp;&nbsp;&nbsp;&nbsp;</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.cash_statement['Operating Cash Flow']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Cash from Investing Activity</StyledTableCell>
-                  <StyledTableCell>{this.state.data.cash_statement['Investing Cash flow']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.cash_statement['Investing Cash flow']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Cash from Financial Activity</StyledTableCell>
-                  <StyledTableCell>{this.state.data.cash_statement['Financing Cash Flow']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.cash_statement['Financing Cash Flow']/10000000}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Net Cash Flow</StyledTableCell>
-                  <StyledTableCell>{this.state.data.cash_statement['Net cash flow / Change in cash']/10000000}</StyledTableCell>
+                  <StyledTableCell align='left'>{this.state.data.cash_statement['Net cash flow / Change in cash']/10000000}</StyledTableCell>
                 </StyledTableRow>
               </TableBody>
             </Table>
@@ -322,25 +291,18 @@ class Reports extends Component {
           </div>
           <TableContainer component={Paper} className="responsive holder" data-result-table>
             <Table className='striped'>
-              <TableHead>
-                <StyledTableRow>
-                  <StyledTableCell>--</StyledTableCell>
-                  <StyledTableCell>--</StyledTableCell>
-                  
-                </StyledTableRow>
-              </TableHead>
               <TableBody>
                 <StyledTableRow>
                   <StyledTableCell>ROCE%</StyledTableCell>
-                  <StyledTableCell>{Math.round((this.state.data.income_statement['EBIT']/(this.state.data.balance_statement['Total assets']-this.state.data.balance_statement['Total current liabilities']))*10000)/100}%</StyledTableCell>
+                  <StyledTableCell align='left'>{Math.round((this.state.data.income_statement['EBIT']/(this.state.data.balance_statement['Total assets']-this.state.data.balance_statement['Total current liabilities']))*10000)/100}%</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
-                  <StyledTableCell>Debter Days</StyledTableCell>
-                  <StyledTableCell>{Math.round((this.state.data.balance_statement['Receivables']/this.state.data.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>
+                  <StyledTableCell>Debter Days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</StyledTableCell>
+                  <StyledTableCell align='left'>{Math.round((this.state.data.balance_statement['Receivables']/this.state.data.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>ROE%</StyledTableCell>
-                  <StyledTableCell>{Math.round((this.state.data.income_statement['Net Income']/(this.state.data.balance_statement['Total shareholders equity']))*10000)/100}%</StyledTableCell>
+                  <StyledTableCell align='left'>{Math.round((this.state.data.income_statement['Net Income']/(this.state.data.balance_statement['Total shareholders equity']))*10000)/100}%</StyledTableCell>
                 </StyledTableRow>
               </TableBody>
             </Table>

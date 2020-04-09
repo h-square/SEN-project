@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Header from '../../Header'
 import Typography from '@material-ui/core/Typography';
-import { spacing } from '@material-ui/system';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -198,7 +197,7 @@ class Peer_comp extends Component{
                         <StyledTableCell >{this.state.data2.income_statement['Revenue']/10000000}</StyledTableCell>
                       </StyledTableRow>
                       <StyledTableRow>
-                        <StyledTableCell >Sales Growth%</StyledTableCell>
+                        <StyledTableCell >Sales Growth%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</StyledTableCell>
                         <StyledTableCell >{Math.round((this.state.data1.income_statement['Revenue Growth']+Number.EPSILON)*10000)/10000}%</StyledTableCell>
                         <StyledTableCell >{Math.round((this.state.data2.income_statement['Revenue Growth']+Number.EPSILON)*10000)/10000}%</StyledTableCell>
                       
@@ -376,7 +375,7 @@ class Peer_comp extends Component{
                     </TableHead>
                     <TableBody>
                       <StyledTableRow>
-                        <StyledTableCell>Cash from Operating Activity</StyledTableCell>
+                        <StyledTableCell>Cash from Operating Activity&nbsp;&nbsp;&nbsp;</StyledTableCell>
                         <StyledTableCell>{this.state.data1.cash_statement['Operating Cash Flow']/10000000}</StyledTableCell>
 
                         <StyledTableCell>{this.state.data2.cash_statement['Operating Cash Flow']/10000000}</StyledTableCell>
@@ -429,7 +428,7 @@ class Peer_comp extends Component{
                       
                       </StyledTableRow>
                       <StyledTableRow>
-                        <StyledTableCell>Debter Days</StyledTableCell>
+                        <StyledTableCell>Debter Days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w</StyledTableCell>
                         <StyledTableCell>{Math.round((this.state.data1.balance_statement['Receivables']/this.state.data1.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>
 
                         <StyledTableCell>{Math.round((this.state.data2.balance_statement['Receivables']/this.state.data2.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>

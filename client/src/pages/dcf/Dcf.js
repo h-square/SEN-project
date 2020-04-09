@@ -1,6 +1,29 @@
 import React from 'react';
 import { Component } from 'react';
-import Loading from '../../images/Loading.gif'
+import Loading from '../../Images/Loading.gif';
+import Button from '@material-ui/core/Button';
+import Header from '../../Header';
+import Typography from '@material-ui/core/Typography';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import red from '@material-ui/core/colors/red';
+import './dcf.css'
+
+const primary = red[500];
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
+}));
 
 class Display extends Component {
 
@@ -32,8 +55,28 @@ class Display extends Component {
       print: true
     })
 
+/*    <div>
+    <center><h3>Discounted Cash Flow</h3></center>
+    <div className='row'>
+      <form className='col s12'>
+        <div className='row'>
+          <h5 className="blue-text center">Ticker Symbol</h5>
+          <div className=" input-field col offset-s4 s4">              
+            <input id='input_text' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
+          </div>
+        </div>
+        <center><button className="btn waves-effect waves-light" type="submit" name="action" onClick={this.handleSubmit}>
+            Submit
+        </button></center>
+      </form>
+    </div>
+    {dataDisplay}
+  </div>
+*/
+
 const axios = require('axios');
 var sym=this.state.symbol.toUpperCase()
+sym=sym.trim()
 var d = new Date();
 var year = d.getFullYear();
 var y1= year-2;
@@ -190,37 +233,63 @@ axios.get(url)
 
   }
   render() {
+
+    const StyledTableCell = withStyles((theme) => ({
+      head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+      },
+      body: {
+        fontSize: 14,
+      },
+    }))(TableCell);
+    
+    const StyledTableRow = withStyles((theme) => ({
+      root: {
+        '&:nth-of-type(odd)': {
+          backgroundColor: theme.palette.background.default,
+        },
+      },
+    }))(TableRow);
+
     console.log(this.state);
     const dataDisplay=this.state.showData? (
       <div className='container' id='content-area'>
-        <center><h2 className='blue lighten-4'>
-          {this.state.symb}
-        </h2></center>
-        <section>
-          <div className="flex-row">
-            <h4>  
-              <small className='red-text text-lighten-1'>  Figures in Rs.</small>
-            </h4>
-          </div>
-          <div className="flex-filler"></div>
-          <div className="responsive holder" data-result-table>
-            <table className='striped responsive-text-nowrap'>
-              
-              <tbody>   
-                <tr>
-                  <td>DCF stock valuation</td>
-                  <td>{this.state.dcf}</td>
-                </tr>
-                <tr>
-                  <td>Stock Price Prediction </td>
-                  <td>{this.state.data}</td>
-
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
         <br/>
+        <center><Typography variant ='h4' className='red lighten-2' color='error'>
+          {this.state.symb}
+        </Typography></center>
+
+        <br/>
+        <section id='ratios'>
+          <div className="flex-row">
+            <Typography variant='h4' color='primary'>
+              Result
+              <Typography variant='body2' color='textSecondary'> Figures in Rs.</Typography>
+            </Typography>
+          </div>
+          <TableContainer component={Paper} className="responsive holder" data-result-table>
+            <Table className='striped'>
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>Function </StyledTableCell>
+                  <StyledTableCell>Price </StyledTableCell>
+                  
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell>DCF stock valuation</StyledTableCell>
+                  <StyledTableCell>Rs. {Math.round((this.state.dcf+Number.EPSILON)*100)/100}</StyledTableCell>
+                </StyledTableRow>
+                <StyledTableRow>
+                  <StyledTableCell>Stock Price Prediction (using LSTM)</StyledTableCell>
+                  <StyledTableCell>Rs. {this.state.data}</StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </section>
       </div>
     ):(
       this.state.print?(
@@ -233,17 +302,19 @@ axios.get(url)
       ):(
           this.state.error?(
             <div>
-              <center><h5 className='red-text'>Enter valid input!</h5></center>
-              <h5>Check following details:</h5>
-              <ul className='collection'>
-                <li className='collection-item'>Check whether the ticker symbol you have entered is valid or not</li>
-              </ul>
-              <h5>If you think this is a mistake then email us at <small className='blue-text'>smap.help@gmail.com</small></h5>
-            </div>
+            <Typography color='error' variant='h4' align='center'>Enter valid input!</Typography>
+            <Typography variant='h4'>Check following details:</Typography>
+            <ul className='collection'>
+              <li className='collection-item'><Typography variant='h6'>Check whether the ticker symbol you have entered is valid or not</Typography></li>
+            </ul>
+            <Typography variant='h6'>If you think this is a mistake then email us at <Typography color='primary' variant='caption' className='blue-text'>smap.help@gmail.com</Typography></Typography>
+          </div>
           ):(
           
             <div>
-              <h5><center className=''>Get DCF stock valuation in just one click!  </center></h5>
+            <br/>
+        <br/>
+              <Typography align='center' variant='h6'>Get DCF stock valuation in just one click!</Typography>
             </div>
           )
       )
@@ -251,21 +322,40 @@ axios.get(url)
     )
     
     return (
-      <div>
-        <center><h3>Discounted Cash Flow</h3></center>
+      <div class="dcf">
+				<Header/>
+				<br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <Typography align='center' color='primary' variant='h5'>
+           Discounted Cash Flow (DCF) and
+        </Typography>
+        <Typography align='center' color='primary' variant='h5'>
+           Stock Prediction (using LSTM)
+        </Typography>
+      <br/>
+      <br/>
+      <br/>
         <div className='row'>
-          <form className='col s12'>
-            <div className='row'>
-              <h5 className="blue-text center">Ticker Symbol</h5>
-              <div className=" input-field col offset-s4 s4">              
-                <input id='input_text' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
+          <form>
+            <div className='form-row'>
+              <div className='dcf-detail'>
+                <div className='form-group'>
+                  <label className='form-label'>Ticker Symbol:</label>
+                  <input className='form-input' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
+                </div>
               </div>
             </div>
-            <center><button className="btn waves-effect waves-light" type="submit" name="action" onClick={this.handleSubmit}>
+            <div className='form-row'>
+            <center><Button align='center' variant="contained" color="primary" type="submit" name="action" onClick={this.handleSubmit}>
                 Submit
-            </button></center>
+            </Button></center>
+            </div>
           </form>
         </div>
+        <br/>
         {dataDisplay}
       </div>
     )

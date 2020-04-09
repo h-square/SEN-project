@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import Header from '../../Header'
-import { Redirect } from 'react-router';
-
+import Header from '../../Header';
+import './Support.css'
 class Support extends Component {
   render() {
     return (
@@ -13,7 +12,7 @@ class Support extends Component {
           <br/>
           <br/>
           <br/>
-          <h1 class="header" style={{color : "black"}} > Purpose of the website </h1>
+          <h1 class="support-header" style={{color : "black"}} > Purpose of the website </h1>
           <hr width="35%" class="ruler"></hr>
           <br/>
           <p class="para"> 
@@ -33,7 +32,7 @@ class Support extends Component {
           The traders can also take part in discussions regarding the market in a discussion forum. Users can post threads, comment on threads and upvote/downvote the threads. Admins can delete a thread if some abusive content is present in a comment/thread.     
           </p>
           <br/>
-          <h1 class="header" style={{color : "black"}} > About Us </h1>
+          <h1 class="support-header" style={{color : "black"}} > About Us </h1>
           <hr width="35%" class="ruler"></hr>
           <br/>
           <p class="para" style={{textDecoration: "underline"}}>Contact us at: smap.help@gmail.com </p>
@@ -44,7 +43,7 @@ class Support extends Component {
           <p class="paraimg">
               The website is developed and managed collectively by the following people:
               <br/>
-            <section class="container">
+            <section class="support-container">
                 <div class="left-half">
                 <article>
                 <ul>

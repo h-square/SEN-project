@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Header from '../../Header';
+import { connect } from 'react-redux';
+import { changeLogin } from '../../actions/postActions';
 
 const qs = require('querystring');
 
 class Login extends Component {
-
     initialState = {
         name: '',
         email: '',
@@ -23,7 +23,7 @@ class Login extends Component {
         super(props);
         this.state = this.initialState;
     }
-
+      
     login = e => {
         e.preventDefault();
         let user = {
@@ -42,17 +42,18 @@ class Login extends Component {
             return res.json();
         })
         .then(res => {
-            console.log(res);
+            //console.log(res);
             if(res.status === "OK"){
-                console.log("redirection turned on!");
+                //console.log("redirection turned on!");
                 //this.state.redirectionToUserHome = true;
                 //this.state.errors = false;
                 this.setState({
                     redirectionToUserHome:true,
                     redirectionTologin: false,
-                    errors:false
+                    errors:false 
                 })
                 
+                this.props.changeLogin(!this.props.loggedin)
                 this.props.history.push('/')
             } else {
                 //this.state.redirectionToUserHome = false;
@@ -62,6 +63,7 @@ class Login extends Component {
                     redirectionTologin: false,
                     errors:res.status
                 })
+                
             }
             this.forceUpdate();
         })
@@ -90,9 +92,9 @@ class Login extends Component {
             return res.json();
         })
         .then(res => {
-            console.log(res);
+            //console.log(res);
             if(res.status === "OK"){
-                console.log("redirection turned on!");
+                //console.log("redirection turned on!");
                 //this.state.redirectionToUserHome = true;
                 //this.state.errors = false;
                 this.setState({
@@ -105,6 +107,7 @@ class Login extends Component {
                     password: '',
                     password2: ''
                 })
+                
                 this.props.history.push('/login')
             } else {
                 //this.state.redirectionToUserHome = false;
@@ -137,7 +140,7 @@ class Login extends Component {
     }
 
     render(){
-        
+        //console.log(this.props)
         let submitBtn = this.state.loginBtn ? 
             (//<input className="login-submit3" type="submit" onClick={this.login} value="Enter" />
                 <center><Button align='center' variant="contained" color="primary" type="submit" onClick={this.login}>
@@ -180,7 +183,8 @@ class Login extends Component {
                 </div>
             </div>) : 
             
-            (<div className='option-detail'>
+            (<center>
+                <div className='option-detail'>
                 <div className='form-group'>
                     <label className='form-label'>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="text" 
                     value={this.state.name} 
@@ -211,13 +215,14 @@ class Login extends Component {
                     className='form-input' 
                     />
                 </div>
-            </div>);
+            </div>
+            </center>);
 
 
         let redirectButton = this.state.redirectionTologin ?
             (<center><h4 style={{color:'green'}}>Registered successfully!</h4></center>):null;
         let error_notification = this.state.errors ? 
-            (<h2>{this.state.errors}</h2>) : null;
+            (<center><h2 style={{color:'red'}}>{this.state.errors}</h2></center>) : null;
 
         return(
             <div className="form_block">
@@ -248,5 +253,15 @@ class Login extends Component {
         )
     }
 }
+const mapStateToProps = (state) => {
+    return {
+        loggedin: state.loggedin
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        changeLogin: (redirectionToUserHome) => {dispatch(changeLogin(redirectionToUserHome))} 
+    }
+}
 
-export default Login;
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
