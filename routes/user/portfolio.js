@@ -357,7 +357,7 @@ router.post('/remove', (req, res) => {
 });
 
 
-// modify add a portfolio for the user
+// modify a portfolio for the user
 router.post('/edit', (req, res) => {
     if(!req.user){
         res.json({
