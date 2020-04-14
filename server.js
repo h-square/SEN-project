@@ -57,7 +57,9 @@ app.use('/api/exists', require('./routes/api/exist'));
 app.use('/user/watchlist', protect, require('./routes/user/watchlist'));
 
 // portfolio
-app.use('/user/portfolio', protect, require('./routes/user/portfolio'));
+app.use('/user/portfolio', protect, require('./routes/user/portfolio/portfolio'));
+app.use('/user/portfolio/requests', protect, require('./routes/user/portfolio/shareRequest'));
+app.use('/user/shareportfolio', require('./routes/user/portfolio/grantShareRequest'));
 
 // start listening
 const PORT = process.env.PORT || config.servPort;

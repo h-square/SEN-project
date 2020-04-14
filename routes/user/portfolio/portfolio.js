@@ -1,11 +1,11 @@
 const express = require('express');
-const firestore = require('../../firebase/firebase').firestore();
-const config = require('../../config');
+const firestore = require('../../../firebase/firebase').firestore();
+const config = require('../../../config');
 
 const router = express.Router();
 const portfolios = firestore.collection('portfolios');
 const quotes = firestore.collection('quotes');
-const stocksdb = require('../../firebase/stocks');
+const stocksdb = require('../../../firebase/stocks');
 
 // portfolio structure
 // p1 = {

@@ -1,6 +1,7 @@
 const config = {
     "keys": {
-        "alphavantage": "replace_with_alphavantage_key"
+        "alphavantage": "replace_with_alphavantage_key",
+        "jwt": 'secret'
     },
     "servPort": 5000,
     "useAlphavantage": false,
