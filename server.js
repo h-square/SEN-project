@@ -62,4 +62,5 @@ app.use('/user/portfolio', protect, require('./routes/user/portfolio'));
 // start listening
 const PORT = process.env.PORT || config.servPort;
 
+// start listening
 app.listen(PORT, () => console.log(`Server running on ${PORT}...`));
