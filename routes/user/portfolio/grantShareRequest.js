@@ -8,6 +8,7 @@ const router = express.Router();
 const auth = require('./smapgmail');
 const portfolios = firestore.collection('portfolios');
 const sharedPortfolios = firestore.collection('sharedPortfolios');
+const sharedList = firestore.collection('sharedList');
 
 
 router.get('/', (req,res) => {
@@ -46,29 +47,127 @@ router.get('/', (req,res) => {
             html: message(reqTo, reqFrom, portfolioName)
         };
 
-        res.json({msg: 'Request Has been granted, actual db logic not yet inserted'});
+        portfolios.where('email', '==', reqTo).get()
+        .then(snapshot=>{
+            if(snapshot.empty){
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: 'No such user exists'}
+                    ]
+                });
+            } else if(snapshot.size>1){
+                res.json({
+                    status: config.statusCodes.failed,
+                    errorType: config.errorCodes.db,
+                    errors: [
+                        {msg: 'Mutliple such users exist.'}
+                    ]
+                });
+            } else{
+                snapshot.forEach(doc=>{
+                    const ports=doc.data().portfolios;
+                    var reqPortfolio={};
+                    let exists=false;
+                    for(let i=0; i<ports.length; i++){
+                        if(ports[i].name==portfolioName){
+                            exists=true;
+                            reqPortfolio=ports[i];
+                            break;
+                        }
+                    };
+                    if(!exists){
+                        res.json({
+                            status: config.statusCodes.failed,
+                            errorType: config.errorCodes.db,
+                            errors: [
+                                {msg: 'The owner may have deleted the required portfolio since the request was made.'}
+                            ]
+                        });
+                    }else{//checked
+                        sharedList.where('owner','==', reqTo).where('receiver','==',reqFrom).where('name','==', portfolioName).get()
+                        .then(snapshot2=>{
+                            if(snapshot2.size!=1){
+                                res.json({
+                                    status: config.statusCodes.failed,
+                                    errorType: config.errorCodes.db,
+                                    errors: [
+                                        {msg: 'Inconsistent database or invalid request.'}
+                                    ]
+                                });
+                            }
+                            else{
+                                snapshot2.forEach(doc2=>{
+                                    sharedList.doc(doc2.id).update({
+                                        granted:true
+                                    });
 
-        // use token to find the requested portfolio in the sharedPortfolio
-        // database and add the timestamp or something to the name
-        // to prevent name clashes
-        // example both the users have portfolios named "techx" so the shared
-        // portfolio techx should appear in the requesting user as something like
-        // techx (obtained from userx on timestamp)
-
-
-        // for the stuff below, ask Rag
-        //insert this after you verify requested portfolio exist
-        /*
-        transporter.sendMail(mailOptions, (err, info) => {
-            if(err) {
-                console.log('Mail failed!');
+                                    sharedPortfolios.where('email','==', reqFrom).get()
+                                    .then(snapshot3=>{
+                                        if(snapshot3.empty){
+                                            sharedPortfolios.add({
+                                                email:reqFrom,
+                                                portfolios:[reqPortfolio]
+                                            })
+                                            .then(()=>{
+                                                res.json({
+                                                    status: config.statusCodes.ok,
+                                                    msg: `Portfolio ${portfolioName} added!`
+                                                });
+                                                transporter.sendMail(mailOptions, (err, info) => {
+                                                    if(err) {
+                                                        console.log('Mail failed!');
+                                                    }
+                                                    else {
+                                                        console.log(`Mail sent: ${reqFrom}`);
+                                                    };
+                                                });
+                                            })
+                                        }else if(snapshot3.size>1){
+                                            res.json({ 
+                                                status: config.statusCodes.failed,
+                                                errorType: config.errorCodes.db,
+                                                errors: [
+                                                    {msg: `Multiple users found! (Inconsistent database)`}
+                                                ]
+                                            });
+                                        }
+                                        else{
+                                            snapshot3.forEach(doc3=>{
+                                                const userData=doc3.data();
+                                                for(let i=0; i<userData.portfolios.length; i++){
+                                                    if(userData.portfolios[i].name == portfolioName){
+                                                        const s2=reqTo.substring(0,reqTo.indexOf('@'));
+                                                        reqPortfolio.name=portfolioName.concat('by'+ s2);
+                                                     }
+                                                }
+                                                userData.portfolios.push(reqPortfolio);
+                                                sharedPortfolios.doc(doc3.id).set(userData)
+                                                .then(()=>{
+                                                    res.json({
+                                                        status: config.statusCodes.ok,
+                                                        msg: `Portfolio ${portfolioName} added!`
+                                                    });
+                                                    transporter.sendMail(mailOptions, (err, info) => {
+                                                        if(err) {
+                                                            console.log('Mail failed!');
+                                                        }
+                                                        else {
+                                                            console.log(`Mail sent: ${reqFrom}`);
+                                                        };
+                                                    });
+                                                });
+                                            })
+                                        }
+                                    })
+                                })
+                            }
+                        })
+                    }
+                })
             }
-            else {
-                console.log(`Mail sent: ${reqFrom}`);
-            };
-        });
-        */
-        
+        })        
     } catch {
         res.json({
             status: config.statusCodes.failed,

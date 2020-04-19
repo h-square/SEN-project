@@ -77,6 +77,60 @@ router.get('/', (req, res) => {
     });;
 });
 
+
+//get all the shared portfolios
+router.get('/shared', (req, res) => {
+    if(!req.user){
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.auth,
+            errors: [
+                {msg: 'Authenticated but user not Found'}
+            ]
+        });
+        return;
+    }
+
+    sharedPortfolios.where('email', '==', req.user.email).get()
+    .then(snapshot => {
+        if(snapshot.empty){
+            res.json({
+                status: config.statusCodes.ok,
+                portfolios: [],
+                msg: `User has no shared portfolios!`
+            });
+        } else if(snapshot.size != 1){
+            res.json({
+                status: config.statusCodes.failed,
+                errorType: config.errorCodes.db,
+                errors: [
+                    {msg: 'Inconsistent Database (Multiple users)'}
+                ]
+            });
+        } else {
+            snapshot.forEach(doc => {
+                res.json({
+                    status: config.statusCodes.ok,
+                    portfolios: doc.data().portfolios
+                });
+            });
+        }
+    })
+    .catch(err => {
+        console.log('Shared portfolios (All) get failed:', err);
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.internal,
+            errors: [
+                {msg: 'Unexpected Error', error: err}
+            ]
+        });
+    });;
+});
+
+
+
+
 // add a portfolio for the user
 router.post('/add', (req, res) => {
     if(!req.user){

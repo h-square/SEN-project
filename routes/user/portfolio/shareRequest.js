@@ -7,7 +7,9 @@ const router = express.Router();
 
 const portfolios = firestore.collection('portfolios');
 const sharedPortfolios = firestore.collection('sharedPortfolios');
+const sharedList = firestore.collection('sharedList');
 const auth = require('./smapgmail');
+
 
 router.post('/', (req, res) => {
     const {reqFrom, reqTo, portfolioName} = req.body;
@@ -31,6 +33,17 @@ router.post('/', (req, res) => {
         });
         return;
     };
+
+    if(!req.user || !(req.user.email==reqFrom)|| (reqTo==reqFrom)){
+        res.json({
+            status: config.statusCodes.failed,
+            errorType: config.errorCodes.auth,
+            errors: [
+                {msg: 'Invalid requester.'}
+            ]
+        });
+        return;
+    }
 
     //check if requested-porfolio exist 
     portfolios.where('email', '==', reqTo).get()
@@ -58,52 +71,68 @@ router.post('/', (req, res) => {
                 let portfolio = user.data().portfolios.find(portfolio => portfolio.name == portfolioName);
 
                 if( portfolio ) {
-                    jwt.sign(payload,
-                        config.keys.jwt,
-                        {expiresIn: 60*60*24},  //24-hours validity
-                        (err, token) => {
-                            if(err) {
-                                res.json({msg: 'Token not generated'});
-                            };
+                    sharedList.where('owner', '==', reqTo).where('receiver', '==', reqFrom).where('name', '==', portfolioName).get()
+                    .then(snapshot=>{
+                        if(snapshot.empty){
+                            jwt.sign(payload,
+                                config.keys.jwt,
+                                {expiresIn: 60*60*24},  //24-hours validity
+                                (err, token) => {
+                                    if(err) {
+                                        res.json({msg: 'Token not generated'});
+                                    };
+                                    
+                                    // change before deploying
+                                    const LINK = `http://localhost:5000/user/shareportfolio?token=${token}`;
+                                    const message = require('./message').shareRequest;
                             
-                            // change before deploying
-                            const LINK = `http://localhost:5000/user/shareportfolio?token=${token}`;
-                            const message = require('./message').shareRequest;
-                
-                            let transporter = nodemailer.createTransport({
-                                service : 'gmail',
-                                auth,
-                                tls: {
-                                  rejectUnauthorized: false
-                                }
-                            });
+                                    let transporter = nodemailer.createTransport({
+                                        service : 'gmail',
+                                        auth,
+                                        tls: {
+                                          rejectUnauthorized: false
+                                        }
+                                    });
+                                    
+                                    let mailOptions = {
+                                        from: '"Stock Market Analysis and Prediction" <noreply.smap@gmail.com>',
+                                        to: reqTo,
+                                        subject: "[TEST Mail] Your Portfolio Request",
+                                        html: message(reqTo, reqFrom, portfolioName, LINK)
+                                    };
                             
-                            let mailOptions = {
-                                from: '"Stock Market Analysis and Prediction" <noreply.smap@gmail.com>',
-                                to: reqTo,
-                                subject: "[TEST Mail] Your Portfolio Request",
-                                html: message(reqTo, reqFrom, portfolioName, LINK)
-                            };
-                
-                            transporter.sendMail(mailOptions, (err, info) => {
-                                if(err) {
-                                    console.log('Mail failed!');
-                                    throw 'nodemailer failed!';
-                                }
-                                else {
-                                    console.log(`Portfolio Request from: ${reqTo} by ${reqFrom}`);
-                                    sharedPortfolios.add({
-                                        token,
-                                        portfolio
-
+                                    transporter.sendMail(mailOptions, (err, info) => {
+                                        if(err) {
+                                            console.log('Mail failed!');
+                                            throw 'nodemailer failed!';
+                                        }
+                                        else {
+                                            console.log(`Portfolio Request from: ${reqTo} by ${reqFrom}`);
+                                            sharedList.add({
+                                                owner: reqTo,
+                                                receiver: reqFrom,
+                                                timestamp: Date.now(),
+                                                granted: false,
+                                                name: portfolioName,
+                                            });
+                                            res.json({
+                                                status: config.statusCodes.ok,
+                                                msg: 'Please ask the user to grant you access.'
+                                            });
+                                        }                                 
                                     });
-                                    res.json({
-                                        status: config.statusCodes.ok,
-                                        msg: 'Please ask the user to grant you access.'
-                                    });
-                                };
+                                });
+                        }
+                        else{
+                            res.json({
+                                status: config.statusCodes.failed,
+                                errorType: config.errorCodes.api,
+                                errors: [
+                                    {msg: 'User has already made such a request.'}
+                                ]
                             });
-                        });
+                        }
+                    });
                 }
                 else {
                     res.json({
@@ -130,3 +159,6 @@ router.post('/', (req, res) => {
 });
 
 module.exports = router;
+
+
+
