@@ -1,4 +1,4 @@
-# SEN-project
+# IT314 Course Project : Stock Market Analysis and Prediction (SMAP)
 
 Setup
 install the server dependencies
