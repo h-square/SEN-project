@@ -3,5 +3,6 @@
 package-lock.json
 /client/package-lock.json
 /sandbox
-/routes/user/portfolio/smapgmail.js
-/firebase/admin-key.json
+#authentication files
+#/routes/user/portfolio/smapgmail.js
+#/firebase/admin-key.json
