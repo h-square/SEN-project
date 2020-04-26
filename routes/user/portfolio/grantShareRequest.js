@@ -99,69 +99,35 @@ router.get('/', (req,res) => {
                             }
                             else{
                                 snapshot2.forEach(doc2=>{
-                                    sharedList.doc(doc2.id).update({
-                                        granted:true
-                                    });
+                                    doc2data=doc2.data()
+                                    if(doc2data.granted==true){
+                                        res.json({
+                                            status: config.statusCodes.failed,
+                                            errorType: config.errorCodes.db,
+                                            errors: [
+                                                {msg: 'This link has already been clicked once and is no longer valid.'}
+                                            ]
+                                        });
+                                    }
+                                    else{
+                                        sharedList.doc(doc2.id).update({
+                                            granted:true
+                                        });
+                                        res.json({
+                                            status: config.statusCodes.ok,
+                                            msg: `Portfolio ${portfolioName} added!`
+                                        });
+                                        transporter.sendMail(mailOptions, (err, info) => {
+                                            if(err) {
+                                                console.log('Mail failed!');
+                                            }
+                                            else {
+                                                console.log(`Mail sent: ${reqFrom}`);
+                                            };
+                                        });
 
-                                    sharedPortfolios.where('email','==', reqFrom).get()
-                                    .then(snapshot3=>{
-                                        if(snapshot3.empty){
-                                            sharedPortfolios.add({
-                                                email:reqFrom,
-                                                portfolios:[reqPortfolio]
-                                            })
-                                            .then(()=>{
-                                                res.json({
-                                                    status: config.statusCodes.ok,
-                                                    msg: `Portfolio ${portfolioName} added!`
-                                                });
-                                                transporter.sendMail(mailOptions, (err, info) => {
-                                                    if(err) {
-                                                        console.log('Mail failed!');
-                                                    }
-                                                    else {
-                                                        console.log(`Mail sent: ${reqFrom}`);
-                                                    };
-                                                });
-                                            })
-                                        }else if(snapshot3.size>1){
-                                            res.json({ 
-                                                status: config.statusCodes.failed,
-                                                errorType: config.errorCodes.db,
-                                                errors: [
-                                                    {msg: `Multiple users found! (Inconsistent database)`}
-                                                ]
-                                            });
-                                        }
-                                        else{
-                                            snapshot3.forEach(doc3=>{
-                                                const userData=doc3.data();
-                                                for(let i=0; i<userData.portfolios.length; i++){
-                                                    if(userData.portfolios[i].name == portfolioName){
-                                                        const s2=reqTo.substring(0,reqTo.indexOf('@'));
-                                                        reqPortfolio.name=portfolioName.concat('by'+ s2);
-                                                     }
-                                                }
-                                                userData.portfolios.push(reqPortfolio);
-                                                sharedPortfolios.doc(doc3.id).set(userData)
-                                                .then(()=>{
-                                                    res.json({
-                                                        status: config.statusCodes.ok,
-                                                        msg: `Portfolio ${portfolioName} added!`
-                                                    });
-                                                    transporter.sendMail(mailOptions, (err, info) => {
-                                                        if(err) {
-                                                            console.log('Mail failed!');
-                                                        }
-                                                        else {
-                                                            console.log(`Mail sent: ${reqFrom}`);
-                                                        };
-                                                    });
-                                                });
-                                            })
-                                        }
-                                    })
-                                })
+                                    }
+                                });
                             }
                         })
                     }
