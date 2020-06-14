@@ -1,34 +1,76 @@
-import React, {Component} from 'react';
-import Button from '@material-ui/core/Button';
+import React, {useState,Component} from 'react';
 import Header from '../../Header';
-import { connect } from 'react-redux';
-import { changeLogin } from '../../actions/postActions';
+import { useHistory } from "react-router-dom";
+
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="/">
+        SMAP
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const qs = require('querystring');
 
-class Login extends Component {
-    initialState = {
-        name: '',
-        email: '',
-        password: '',
-        password2: '',
-        formTitle: 'Login',
-        loginBtn: true,
-        errors: '',
-        redirectionToUserHome: false,
-        redirectionTologin: false
-    }
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
-    constructor(props){
-        super(props);
-        this.state = this.initialState;
-    }
-      
-    login = e => {
+
+export default function Login() {
+    const classes = useStyles();
+    const [name,setName] = useState('');
+    const [email,setEmail] = useState('');
+    const [password,setPassword] = useState('');
+    const [password2,setPassword2] = useState('');
+    const [loginBtn,setLoginBtn] = useState(true);
+    const [errors,setErrors] = useState('');
+    const [redirectionTologin,setRedirectionToLogin] = useState(false);
+    const [redirectionToUserHome,setRedirectionToUserHome] = useState(false);
+    const [PrivacyPolicy,setPrivacyPolicy] = useState(false);
+
+    const history = useHistory();
+
+    function login(e){
         e.preventDefault();
         let user = {
-            email: this.state.email,
-            password: this.state.password
+            email: email,
+            password: password
         };
 
         fetch('/user/login', {
@@ -44,41 +86,29 @@ class Login extends Component {
         .then(res => {
             //console.log(res);
             if(res.status === "OK"){
-                //console.log("redirection turned on!");
-                //this.state.redirectionToUserHome = true;
-                //this.state.errors = false;
-                this.setState({
-                    redirectionToUserHome:true,
-                    redirectionTologin: false,
-                    errors:false 
-                })
+                setRedirectionToLogin(false)
+                setRedirectionToUserHome(true)
+                setErrors(false)
                 
-                this.props.changeLogin(!this.props.loggedin)
-                this.props.history.push('/')
+                history.push('/')
             } else {
-                //this.state.redirectionToUserHome = false;
-                //this.state.errors = res.status;
-                this.setState({
-                    redirectionToUserHome:false,
-                    redirectionTologin: false,
-                    errors:res.status
-                })
-                
+                setRedirectionToLogin(false)
+                setRedirectionToUserHome(false)
+                setErrors(res.status)
             }
-            this.forceUpdate();
         })
         .catch(err => {
             console.log(err);
         });
     }
 
-    register = e => {
+    function register(e) {
         e.preventDefault();
         let user = {
-            name: this.state.name,
-            email: this.state.email,
-            password: this.state.password,
-            password2: this.state.password2
+            name: name,
+            email: email,
+            password: password,
+            password2: password2
         };
 
         fetch('/user/register', {
@@ -92,176 +122,230 @@ class Login extends Component {
             return res.json();
         })
         .then(res => {
-            //console.log(res);
+            console.log(res);
             if(res.status === "OK"){
-                //console.log("redirection turned on!");
-                //this.state.redirectionToUserHome = true;
-                //this.state.errors = false;
-                this.setState({
-                    redirectionTologin:true,
-                    redirectionToUserHome: false,
-                    errors:false,
-                    loginBtn:true,
-                    name: '',
-                    email: '',
-                    password: '',
-                    password2: ''
-                })
+                setRedirectionToLogin(true);
+                setRedirectionToUserHome(false)
+                setErrors(false)
+                setLoginBtn(true)
+                setName('')
+                setEmail('')
+                setPassword('')
+                setPassword2('')
                 
-                this.props.history.push('/login')
+                history.push('/login')
             } else {
-                //this.state.redirectionToUserHome = false;
-                //this.state.errors = res.errors[0].msg;
-                this.setState({
-                    redirectionToUserHome:false,
-                    redirectionTologin:false,
-                    errors:res.errors[0].msg
-                })
+                setRedirectionToLogin(false)
+                setRedirectionToUserHome(false)
+                setErrors(res.errors[0].msg)
             }
-            this.forceUpdate();
         })
         .catch(err => {
             console.log(err);
         });
     }
 
-    getAction = action => {
-        if(action === 'reg'){
-            this.setState(this.initialState);
-            this.setState({formTitle: 'Register New User', loginBtn: false});
-        }else{
-            this.setState(this.initialState);
-            this.setState({formTitle: 'Login', loginBtn: true});
-        }
+    function handleChangeEmail(e){
+        setEmail(e.target.value)
+    }
+    
+    function handleChangePassword(e){
+        setPassword(e.target.value)
     }
 
-    handleChange = e => {
-        this.setState({[e.target.name]: e.target.value});
+    function handleChangeName(e){
+        setName(e.target.value)
     }
 
-    render(){
-        //console.log(this.props)
-        let submitBtn = this.state.loginBtn ? 
-            (//<input className="login-submit3" type="submit" onClick={this.login} value="Enter" />
-                <center><Button align='center' variant="contained" color="primary" type="submit" onClick={this.login}>
-                    Login
-                </Button></center>
-                
-            ) : 
-            (//<input className="login-submit2" type="submit" onClick={this.register} value="Register" />
-                <div>
-                    <center><Button align='center' variant="contained" color="primary" type="submit" onClick={this.register}>
-                        SignUp
-                    </Button></center>
-                </div>
-            );
+    function handleChangePassword2(e){
+        setPassword2(e.target.value)
+    }
 
-        let login_register = this.state.loginBtn ?
-            (<center>
-                <br/>
-                Not a user? &nbsp;&nbsp;
-                <Button align='center' variant="contained" color="primary" type="submit" onClick={() => this.getAction('reg')}>Register</Button>
-            </center>) : 
-            (<div></div>)
+    function handleChangeCheckbox(e){
+        if(PrivacyPolicy)
+            setPrivacyPolicy(false)
+        else
+            setPrivacyPolicy(true)
+    }
 
-        let login_from = this.state.loginBtn ?
-            (<div className='stock-detail'>
-                <div className='form-group'>
-                    <label className='form-label'>E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input className='form-input'type="text" 
-                    value={this.state.email} 
-                    onChange={this.handleChange} 
-                    name="email" 
-                    />
-                </div>
-                <div className='form-group'>
-                    <label className='form-label'>Password&nbsp;:</label><input type="password" 
-                    value={this.state.password} 
-                    onChange={this.handleChange} 
-                    name="password" 
-                    className='form-input'
-                    />
-                </div>
-            </div>) : 
-            
-            (<center>
-                <div className='option-detail'>
-                <div className='form-group'>
-                    <label className='form-label'>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="text" 
-                    value={this.state.name} 
-                    onChange={this.handleChange} 
-                    name="name" 
-                    className='form-input'
-                    />
-                </div>
-                <div className='form-group'>
-                    <label className='form-label'>E-mail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="text" 
-                    value={this.state.email} 
-                    onChange={this.handleChange} 
-                    name="email" 
-                    className='form-input'/>
-                </div>
-                <div className='form-group'>
-                    <label className='form-label'>Password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label><input type="password" 
-                    value={this.state.password} 
-                    onChange={this.handleChange} 
-                    name="password" 
-                    className='form-input'/>
-                </div>
-                <div className='form-group'>
-                    <label className='form-label'>Re-Password&nbsp;&nbsp;:</label><input type="password" 
-                    value={this.state.password2} 
-                    onChange={this.handleChange} 
-                    name="password2"
-                    className='form-input' 
-                    />
-                </div>
-            </div>
-            </center>);
+    function handleNewUser(e){
+        setName('')
+        setEmail('')
+        setPassword('')
+        setPassword2('')
+        setErrors('')
+        setRedirectionToLogin(false)
+        setRedirectionToUserHome(false)
+        setLoginBtn(false)
+    }
+    let redirectButton = redirectionTologin ?
+        (<Typography align='center' variant='h6'>Registered successfully! Login to continue...</Typography>):null;
+    let error_notification = errors ? 
+        (<Typography align='center' variant='h6' style={{color: 'red'}}>{errors}</Typography>) : null;
 
-
-        let redirectButton = this.state.redirectionTologin ?
-            (<center><h4 style={{color:'green'}}>Registered successfully!</h4></center>):null;
-        let error_notification = this.state.errors ? 
-            (<center><h2 style={{color:'red'}}>{this.state.errors}</h2></center>) : null;
-
-        return(
-            <div className="form_block">
-                <Header/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <div>
-                    {redirectButton}
-                    <form>
-                        <div className="form-row">
-                            {login_from}
+    return (
+        <div>
+            <Header/>
+            {redirectButton}
+            { loginBtn?(
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline />
+                    <div className={classes.paper}>
+                        <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                        Sign in
+                        </Typography>
+                        <form className={classes.form} noValidate>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            value={email} 
+                            onChange={handleChangeEmail}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password} 
+                            onChange={handleChangePassword}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                            onClick={login}
+                        >
+                            Sign In
+                        </Button>
+                        <Grid container>
+                            <Grid item onClick={handleNewUser}>
+                            <Link variant="body2">
+                                {"Don't have an account? Sign Up"}
+                            </Link>
+                            </Grid>
+                        </Grid>
+                        </form>
+                    </div>
+                </Container>
+            ) : (
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline />
+                    <div className={classes.paper}>
+                        <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            Sign up
+                        </Typography>
+                        <form className={classes.form} noValidate>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                            <TextField
+                                autoComplete="name"
+                                name="name"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="name"
+                                label="Name"
+                                autoFocus
+                                value={name}
+                                onChange={handleChangeName}
+                            />
+                            </Grid>
                             
-                            <div className='form-group'>
-                                {submitBtn}
-                            </div>
-                        </div>
-                    </form>
-                    {login_register}
-                </div>
-                <br/>
-                
-                {error_notification}
-            </div>
-           
-        )
-    }
+                            <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                value={email}
+                                onChange={handleChangeEmail}
+                            />
+                            </Grid>
+                            <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={handleChangePassword}
+                            />
+                            </Grid>
+                            <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password2"
+                                label="Re-Password"
+                                type="password"
+                                id="password2"
+                                autoComplete="current-password"
+                                value={password2}
+                                onChange={handleChangePassword2}
+                            />
+                            </Grid>
+                            <Grid item xs={12}>
+                            <FormControlLabel
+                                control={<Checkbox value={PrivacyPolicy} color="primary" onChange={handleChangeCheckbox}/>}
+                                label="Accept SMAP's privacy policy"
+                            />
+                            </Grid>
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            disabled={!PrivacyPolicy}
+                            className={classes.submit}
+                            onClick={register}
+                        >
+                        Sign Up
+                        </Button>
+                        <Grid container justify="flex-end">
+                            <Grid item>
+                                <a href='/login' variant="body2">
+                                    Already have an account? Sign in
+                                </a>
+                            </Grid>
+                        </Grid>
+                        </form>
+                    </div>
+                    
+                </Container>
+            )}
+            {error_notification}
+            <Box mt={5}>
+                <Copyright />
+            </Box>
+        </div>
+    );
 }
-const mapStateToProps = (state) => {
-    return {
-        loggedin: state.loggedin
-    }
-}
-const mapDispatchToProps = (dispatch) =>{
-    return {
-        changeLogin: (redirectionToUserHome) => {dispatch(changeLogin(redirectionToUserHome))} 
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -1,26 +1,37 @@
 import React, { Component } from 'react';
-import { changeLogin } from '../../actions/postActions';
-import { connect } from 'react-redux';
+import axios from 'axios';
 
 class Logout extends Component{
+    constructor() {
+        super();
+        this.state = {
+          logout : false
+        }
+    }
+    componentDidMount(){
+        axios.get('/user/logout')
+            .then(res=>{
+                if(res.data.status ==='OK'){
+                    console.log('logout');
+                    this.setState({
+                        logout : true
+                    })
+                }
+                //console.log(res);
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+    }
     render(){
-        this.props.changeLogin(false)
-        this.props.history.push('/')
+        let gohome = this.state.logout?(this.props.history.push('/')):(null);
         return(
-            <div></div>
+            <div>
+                {gohome}
+            </div>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        loggedin: state.loggedin
-    }
-  }
-  const mapDispatchToProps = (dispatch) =>{
-    return {
-        changeLogin: (redirectionToUserHome) => {dispatch(changeLogin(redirectionToUserHome))} 
-    }
-  }
   
-export default connect(mapStateToProps, mapDispatchToProps)(Logout);
+export default Logout;

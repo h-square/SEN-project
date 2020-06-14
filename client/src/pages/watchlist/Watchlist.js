@@ -24,6 +24,7 @@ class Watchlist extends Component{
     }
     
     componentDidMount(){
+
         let self=this;
         fetch('/user/watchlist',{
             method : 'GET',
@@ -80,7 +81,7 @@ class Watchlist extends Component{
         })
         .then(res => {
             console.log(res);
-            if(JSON.stringify(res.stocks)!=JSON.stringify(self.state.stock_list)){
+            if(JSON.stringify(res.stocks) !== JSON.stringify(self.state.stock_list)){
                 fetch('/api/quote/'+self.state.searched_stock,{
                     method : 'GET'
                 })
@@ -118,11 +119,10 @@ class Watchlist extends Component{
             return res.json();
         })
         .then(res => {
-            let temp_quotes = [];
             //console.log(data['stocks'])
             let new_list = self.state.quotes.filter(element => {
                 console.log(element);
-                return element.symbol != removedStock;
+                return element.symbol !== removedStock;
             });
             self.setState({
                 stock_list : res.stocks,

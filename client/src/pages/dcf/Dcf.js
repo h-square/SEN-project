@@ -11,19 +11,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import red from '@material-ui/core/colors/red';
+import { withStyles } from '@material-ui/core/styles';
 import './dcf.css'
-
-const primary = red[500];
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& .MuiTextField-root': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-}));
 
 class Display extends Component {
 
