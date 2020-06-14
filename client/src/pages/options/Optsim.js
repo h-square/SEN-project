@@ -1,6 +1,5 @@
-import React, { useState, Fragment, Component } from "react";
+import React, { useState, Fragment} from "react";
 import ReactDOM from "react-dom";
-import CanvasJSChart from './canvasjs.react';
 import payoff from './payoff'
 import './option.css'
 import Header from '../../Header'
@@ -250,22 +249,22 @@ const Optsim = () => {
         {
             if(inputFields[option].optionType === "call")
             {
-              if(inputFields[option].buySell == 'buy')
+              if(inputFields[option].buySell === 'buy')
               {
                 ans[price-startPrice]+=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell == 'sell')
+              else if(inputFields[option].buySell === 'sell')
               {
                 ans[price-startPrice]-=(Math.max(price-inputFields[option].strikePrice,0)-inputFields[option].optionPrice)
               }
             }
-            if(inputFields[option].optionType == 'put')
+            if(inputFields[option].optionType === 'put')
             {
-              if(inputFields[option].buySell == 'buy')
+              if(inputFields[option].buySell === 'buy')
               {
                 ans[price-startPrice]+=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }
-              else if(inputFields[option].buySell == 'sell')
+              else if(inputFields[option].buySell === 'sell')
               {
                 ans[price-startPrice]-=(Math.max(inputFields[option].strikePrice-price,0)-inputFields[option].optionPrice)
               }

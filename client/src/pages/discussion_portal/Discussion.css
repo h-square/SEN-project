@@ -1,0 +1,11 @@
+.like-share-comment-bookmark{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+.same-row{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: row;
+}

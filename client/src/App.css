@@ -4,18 +4,24 @@
   box-sizing: border-box;
 }
 
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform : translate(-50%,-50%);
+}
+
 .home
 {
-  background-image: url('./Images/back.jpg');
+  /* background-image: url('./Images/back.jpg'); */
   background-size: 120% 120% !important;
-  transform: translate3d(0, 0, 0);
   height: 100vh;
   background-repeat: no-repeat;
 }
 
 .signup-body
 {
-  background-image: url('./Images/back.jpg');
+  /* background-image: url('./Images/back.jpg'); */
 }
 header   
 {
