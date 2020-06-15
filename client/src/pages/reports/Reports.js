@@ -344,7 +344,7 @@ function Reports(){
           </div>
         )
     )
-    
+  
   )
   return(
     <div>
@@ -352,7 +352,7 @@ function Reports(){
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Typography component="h1" variant="h5">
+          <Typography align = 'center' component="h1" variant="h5">
             Annual Report
           </Typography>
           <form className={classes.form} noValidate> 

@@ -3,15 +3,9 @@ import ReactDOM from "react-dom";
 import payoff from './payoff'
 import './option.css'
 import Header from '../../Header'
-//var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
-
-//import "bootstrap/dist/css/bootstrap.css";
+import { Typography, Container, CssBaseline, TextField, Radio, FormControl, RadioGroup, FormControlLabel, Button, Box } from "@material-ui/core";
 
 const Optsim = () => {
-
-
-//class Optsim extends Component {
 
   const [errors,seterrors] = useState([]);
   const [errors1,seterrors1] = useState([]);
@@ -311,162 +305,258 @@ const Optsim = () => {
 
   };
 
-  //render(){
   return (
-     <body class="option">
+    <div>
       <Header/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <h1 class="header">Option Simulator</h1>
-      <form onSubmit={handleSubmit}>
-      {errors.map(error => (
-          <h3 style={{color: "red"}} key={error}>Error: {error}</h3>
-        ))}
-        {errors1.map(error1 => (
-          <h3 style={{color: "red"}} key={error1}>Error: {error1}</h3>
-        ))}
-        {errors11.map(error11 => (
-          <h3 style={{color: "red"}} key={error11}>Error: {error11}</h3>
-        ))}
-        {errors2.map(error2 => (
-          <h3 style={{color: "red"}} key={error2}>Error: {error2}</h3>
-        ))}
-        {errors3.map(error3 => (
-          <h3 style={{color: "red"}} key={error3}>Error: {error3}</h3>
-        ))}
-        <h3 style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </h3>
-        <h3 class="h3-text">Enter range of stock prices for simulation:</h3>
-        <div className="form-row">
-        <div class="stock-detail">
-                <div className="form-group ">
-                  <label class="form-label" htmlFor="startPrice">Start Price :</label>
-                    <input //ref={st_prInput => this._st_prInput}
-                    type='text'
-                    className="form-input"
-                    id="startPrice"
-                    name="startPrice"
-                    placeholder="Enter value"
-                    //value={startPrice}
-                    onChange={event => handleInputPricesChange(event)}
-                    />
-              </div>
-              <div className="form-group">
-                    <label class="form-label" htmlFor="endPrice">End Price &nbsp;&nbsp;:</label>
-                    <input //ref={en_prInput => this._en_prInput}
-                    type='text'
-                    className="form-input"
-                    id="endPrice"
-                    name="endPrice"
-                    placeholder="Enter value"
-                    //value={endPrice}
-                    onChange={event => handleInputPricesChange(event)}
-                    />
-              </div>
-              </div>
-              <h3 class="h3-text">Enter option details:</h3>
-          {inputFields.map((inputField, index) => (
-            <Fragment key={`${inputField}~${index}`}>
-            <center>
-            <div class="option-detail">
-              <div className="form-group">
-                <label class="form-label" htmlFor="strikePrice">Strike Price&nbsp;&nbsp;&nbsp;:</label>
-                <input //ref={strike_prInput => this._strike_prInput}
-                  type='text'
-                  className="form-input"
-                  id="strikePrice"
+      <Container component='main' maxWidth='xs'>
+        <CssBaseline/>
+        <Typography align='center' variant='h5'>Option Simulator</Typography>
+        <br/>
+        <Typography variant = 'h6'>Enter range of stock prices for simulation:</Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            label="Start Price"
+            name="startPrice"
+            id='startPrice'
+            autoComplete="sprice"
+            autoFocus
+            onChange={event => handleInputPricesChange(event)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            label="End Price"
+            name="endPrice"
+            id='endPrice'
+            autoComplete="eprice"
+            autoFocus
+            onChange={event => handleInputPricesChange(event)}
+          />
+          <div className="form-row">
+          {/* <div class="stock-detail">
+                  <div className="form-group ">
+                    <label class="form-label" htmlFor="startPrice">Start Price :</label>
+                      <input //ref={st_prInput => this._st_prInput}
+                      type='text'
+                      className="form-input"
+                      id="startPrice"
+                      name="startPrice"
+                      placeholder="Enter value"
+                      //value={startPrice}
+                      onChange={event => handleInputPricesChange(event)}
+                      />
+                </div>
+                <div className="form-group">
+                      <label class="form-label" htmlFor="endPrice">End Price &nbsp;&nbsp;:</label>
+                      <input //ref={en_prInput => this._en_prInput}
+                      type='text'
+                      className="form-input"
+                      id="endPrice"
+                      name="endPrice"
+                      placeholder="Enter value"
+                      //value={endPrice}
+                      onChange={event => handleInputPricesChange(event)}
+                      />
+                </div>
+                </div> */}
+            <Typography variant='h6'>Enter option details:</Typography>
+            {inputFields.map((inputField, index) => (
+              <Fragment key={`${inputField}~${index}`}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Strike Price"
                   name="strikePrice"
-                  placeholder="Enter value"
+                  id='strikePrice'
+                  autoComplete="strikeprice"
+                  autoFocus
                   value={inputFields[index].strikePrice}
                   onChange={event => handleInputChange(index, event)}
                 />
-              </div>
 
-              <div className="form-group" onChange={event => handleInputChange(index, event)}>
-                <label class="form-label" htmlFor="optionType">Option Type&nbsp;: </label>
-                <label class="form-label-for-radio">
-                <input type="radio" className="form-input-for-radio" 
-                  id="optionType" value="call" defaultChecked name="optionType" />
-                  Call
-                </label>
-                <label class="form-label-for-radio">
-                <input type="radio" className="form-input-for-radio" 
-                  id="optionType" value="put" name="optionType" />
-                  Put
-                </label>
-                <p class="h3-text"> Selected type: {inputFields[index].optionType} </p>
-              </div>
+                <Typography variant='h6'>Option Type:</Typography>
+                <FormControl component="fieldset">
+                  <RadioGroup onChange={event => handleInputChange(index, event)}>
+                    <FormControlLabel id="optionType" name='optionType' value="call" control={<Radio />} label="Call" />
+                    <FormControlLabel id="optionType" name='optionType' value="put" control={<Radio />} label="Put" />
+                  </RadioGroup>
+                </FormControl>
 
-              <div className="form-group">
-                <label htmlFor="optionPrice" class="form-label">Option Price&nbsp;:</label>
-                <input //ref={opt_prInput => this._opt_prInput}
-                  type='text' 
-                  className="form-input" 
-                  id="optionPrice"
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Option Price"
                   name="optionPrice"
-                  placeholder="Enter value"
+                  id='optionPrice'
+                  autoComplete="optionprice"
+                  autoFocus
                   value={inputFields[index].optionPrice}
                   onChange={event => handleInputChange(index, event)}
                 />
-              </div>
-              <div className="form-group" onChange={event => handleInputChange(index, event)}>
-                <label htmlFor="buySell" class="form-label">Buy/Sell &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
-                <label class="form-label-for-radio">
-                <input type="radio" className="form-input-for-radio" 
-                  id="buySell" value="buy" defaultChecked name="buySell" />
-                  Buy
-                </label>
-                <label class="form-label-for-radio">
-                <input type="radio" className="form-input-for-radio" 
-                  id="buySell" value="sell" name="buySell" />
-                  Sell
-                </label>
-                <p class="h3-text"> Selected type: {inputFields[index].buySell} </p>
-              </div>
-                <div className="form-group">
-                <button
-                  className="form-btn"
-                  type="button"
-                  onClick={() => handleRemoveFields(index)}
-                >
-                  Remove
-                </button>
 
-                <button
-                  className="form-btn"
-                  type="button"
-                  onClick={() => handleAddFields()}
-                >
-                  Add
-                </button>
+                <Typography variant='h6'>Option Buy/Sell:</Typography>
+                <FormControl component="fieldset">
+                  <RadioGroup onChange={event => handleInputChange(index, event)}>
+                    <FormControlLabel id="buySell" name='buySell' value="buy" control={<Radio />} label="Buy" />
+                    <FormControlLabel id="buySell" name='buySell' value="sell" control={<Radio />} label="Sell" />
+                  </RadioGroup>
+                </FormControl>
+                <br/>
+                <Box bgcolor="" p={1} my={0.5} align='center'>
+                  <Button
+                      type="button"
+                      variant="contained"
+                      style={{textTransform : 'none'}}
+                      onClick={() => handleRemoveFields(index)}
+                  >
+                      Remove
+                  </Button>
+                  <Button
+                      type="button"
+                      variant="contained"
+                      style={{textTransform : 'none'}}
+                      onClick={() => handleAddFields()}
+                  >
+                      Add
+                  </Button>
+                </Box>
+
+              {/* <center>
+              <div class="option-detail">
+                <div className="form-group">
+                  <label class="form-label" htmlFor="strikePrice">Strike Price&nbsp;&nbsp;&nbsp;:</label>
+                  <input //ref={strike_prInput => this._strike_prInput}
+                    type='text'
+                    className="form-input"
+                    id="strikePrice"
+                    name="strikePrice"
+                    placeholder="Enter value"
+                    value={inputFields[index].strikePrice}
+                    onChange={event => handleInputChange(index, event)}
+                  />
                 </div>
+
+                <div className="form-group" onChange={event => handleInputChange(index, event)}>
+                  <label class="form-label" htmlFor="optionType">Option Type&nbsp;: </label>
+                  <label class="form-label-for-radio">
+                  <input type="radio" className="form-input-for-radio" 
+                    id="optionType" value="call" defaultChecked name="optionType" />
+                    Call
+                  </label>
+                  <label class="form-label-for-radio">
+                  <input type="radio" className="form-input-for-radio" 
+                    id="optionType" value="put" name="optionType" />
+                    Put
+                  </label>
+                  <p class="h3-text"> Selected type: {inputFields[index].optionType} </p>
                 </div>
-                </center>
-            </Fragment>
-          ))}
-        </div>
-            <br/>
-        <div className="form-group">
-        <center>
-          <button
-            id = "submit"
-            className="option-submit"
+
+                <div className="form-group">
+                  <label htmlFor="optionPrice" class="form-label">Option Price&nbsp;:</label>
+                  <input //ref={opt_prInput => this._opt_prInput}
+                    type='text' 
+                    className="form-input" 
+                    id="optionPrice"
+                    name="optionPrice"
+                    placeholder="Enter value"
+                    value={inputFields[index].optionPrice}
+                    onChange={event => handleInputChange(index, event)}
+                  />
+                </div>
+                <div className="form-group" onChange={event => handleInputChange(index, event)}>
+                  <label htmlFor="buySell" class="form-label">Buy/Sell &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                  <label class="form-label-for-radio">
+                  <input type="radio" className="form-input-for-radio" 
+                    id="buySell" value="buy" defaultChecked name="buySell" />
+                    Buy
+                  </label>
+                  <label class="form-label-for-radio">
+                  <input type="radio" className="form-input-for-radio" 
+                    id="buySell" value="sell" name="buySell" />
+                    Sell
+                  </label>
+                  <p class="h3-text"> Selected type: {inputFields[index].buySell} </p>
+                </div>
+                  <div className="form-group">
+                  <button
+                    className="form-btn"
+                    type="button"
+                    onClick={() => handleRemoveFields(index)}
+                  >
+                    Remove
+                  </button>
+
+                  <button
+                    className="form-btn"
+                    type="button"
+                    onClick={() => handleAddFields()}
+                  >
+                    Add
+                  </button>
+                  </div>
+                  </div>
+                  </center> */}
+              </Fragment>
+            ))}
+          </div>
+          <br/>
+          <Button
             type="submit"
-            onSubmit={handleSubmit}
+            id='submit'
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
           >
             Save
-          </button></center>
-        </div>
+          </Button>
+          {/* <br/>
+          <div className="form-group">
+          <center>
+            <button
+              id = "submit"
+              className="option-submit"
+              type="submit"
+              onSubmit={handleSubmit}
+            >
+              Save
+            </button></center>
+          </div> */}
+          <br/>
+          </form>
+          {errors.map(error => (
+              <Typography variant='h6' align='center' style={{color: "red"}} key={error}>Error: {error}</Typography>
+            ))}
+            {errors1.map(error1 => (
+              <Typography variant='h6' align='center' style={{color: "red"}} key={error1}>Error: {error1}</Typography>
+            ))}
+            {errors11.map(error11 => (
+              <Typography variant='h6' align='center' style={{color: "red"}} key={error11}>Error: {error11}</Typography>
+            ))}
+            {errors2.map(error2 => (
+              <Typography variant='h6' align='center' style={{color: "red"}} key={error2}>Error: {error2}</Typography>
+            ))}
+            {errors3.map(error3 => (
+              <Typography variant='h6' align='center' style={{color: "red"}} key={error3}>Error: {error3}</Typography>
+            ))}
 
-      </form>
-      <div id = "chart" class="chart">
-      
-      </div>
-    </body>
+          <Typography style={{color: "green"}} > If saved without correcting the error, output might not be correct/valid. </Typography>
+        </Container>
+        <div id = "chart" class="chart">
+        
+        </div>
+    </div>
   );
-    //      }
 };
 
 export default Optsim;

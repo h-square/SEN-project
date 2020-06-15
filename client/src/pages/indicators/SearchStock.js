@@ -1,7 +1,9 @@
 import React from 'react';
 import CanvasJSReact from './canvasjs.react';
 import Button from '@material-ui/core/Button';
+import Header from '../../Header'
 import './SearchStock.css'
+import { Typography, Container, CssBaseline, TextField } from '@material-ui/core';
 
 var dataPoints =[];
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -91,14 +93,14 @@ class SearchStock extends React.Component{
         }
         
         name = document.getElementById("stock_input").value;
-        console.log(name);
+        //console.log(name);
         name = name.trim().toUpperCase();
         var letters = /^[A-Za-z0-9]+$/
         if(!name.match(letters))
         {
             chart_exists=false;
             this.setState({element : null})
-            alert("Please enter valid stock symbol");
+            alert("Please enter valid stock symbol!");
             return;
         }
         
@@ -138,7 +140,7 @@ class SearchStock extends React.Component{
         {
             chart_exists=false;
             this.setState({element : null})
-            alert("Please enter valid stock symbol");
+            alert("Please enter valid stock symbol!");
         }
         else
         {
@@ -152,7 +154,7 @@ class SearchStock extends React.Component{
                 {
                     chart_exists=false;
                     self.setState({element : null})
-                    alert("Please enter valid stock symbol");
+                    alert("Please enter valid stock symbol!");
                 }
                 else
                 {
@@ -207,22 +209,33 @@ class SearchStock extends React.Component{
             })
             .catch(err => {console.log(err);chart_exists=false;
             self.setState({element : null})
-            alert("Please enter valid stock symbol");});
+            alert("Please enter valid stock symbol!");});
         }
     }
 
     render(){
         return(
             <div>
-                <form>
-                    <div className='ind-detail'>
-                        <label className='ind-label'>Ticker Symbol:</label>
-                        <input className='ind-input' type="text" placeholder='Enter Value' id="stock_input"/>
-                    </div>
+                <Header/>
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline/>
+                    <Typography align='center' variant='h5'>Technical Indicators</Typography>
+                    <form noValidate>
+                        <TextField
+                            variant = 'outlined'
+                            margin = 'normal'
+                            required
+                            fullWidth
+                            id="stock_input"
+                            label='Ticker Symbol'
+                            autoFocus
+                            type='text'
+                        >
+                        </TextField>
+                        <Button align='center' fullWidth variant='contained' color='primary' onClick={this.handleSubmit}>Submit</Button>
+                    </form>
                     <br/>
-                    <center><Button align='center' variant='contained' color='primary' onClick={this.handleSubmit}>Submit</Button></center>
-                </form>
-                <br/>
+                </Container>
                 {this.state.element}
             </div>
         )

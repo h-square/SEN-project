@@ -13,6 +13,7 @@ import Button from '@material-ui/core/Button';
 import Loading from '../../Images/Loading.gif';
 import { withStyles } from '@material-ui/core/styles';
 import './Peer_comp.css'
+import { Container, CssBaseline, TextField, Box, List, ListItem } from '@material-ui/core';
 
 class Peer_comp extends Component{
     constructor() {
@@ -154,9 +155,10 @@ class Peer_comp extends Component{
             head: {
               backgroundColor: theme.palette.common.black,
               color: theme.palette.common.white,
+              fontSize: 18
             },
             body: {
-              fontSize: 14,
+              fontSize: 15,
             },
         }))(TableCell);
           
@@ -169,15 +171,17 @@ class Peer_comp extends Component{
         }))(TableRow);
       
         const dataDisplay=this.state.showData1 && this.state.showData2? (
-            console.log(this.state.data1),
-            console.log(this.state.data2),
+          <Box width="70%" bgcolor="" p={1} my={0.5} style={{marginLeft:'15%', marginRight:'15%'}}>
+            <center><Typography variant ='h5' className='red lighten-2' color='error'>
+            {this.state.data1.symbol} - {this.state.data2.symbol} {this.state.data1.year}
+            </Typography></center>
             <div className='container' id='content-area'>
               <br/>
               <section id="profit-loss">
                 <div className="flex-row">
-                  <Typography variant='h4' color='primary'>
+                  <Typography variant='h5' color='primary'>
                     Profit and Loss
-                    <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+                    <Typography variant='body2' color='textSecondary'>&nbsp;&nbsp;Figures in Rs. Crores</Typography>
                   </Typography>
                 </div>
                 <div className="flex-filler"></div>
@@ -266,9 +270,9 @@ class Peer_comp extends Component{
               <br/>
               <section id='balance-sheet'>
                 <div className="flex-row">
-                <Typography variant='h4' color='primary'>
+                <Typography variant='h5' color='primary'>
                     Balance Sheet
-                    <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+                    <Typography variant='body2' color='textSecondary'>&nbsp;&nbsp;Figures in Rs. Crores</Typography>
                   </Typography>
                 </div>
                 <TableContainer component={Paper} className="responsive holder" data-result-table>
@@ -359,9 +363,9 @@ class Peer_comp extends Component{
               <br/>
               <section id='cash-flows'>
                 <div className="flex-row">
-                  <Typography variant='h4' color='primary'>
+                  <Typography variant='h5' color='primary'>
                     Cash Flows
-                    <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+                    <Typography variant='body2' color='textSecondary'>&nbsp;&nbsp;Figures in Rs. Crores</Typography>
                   </Typography>
                 </div>
                 <TableContainer component={Paper} className="responsive holder" data-result-table>
@@ -406,9 +410,9 @@ class Peer_comp extends Component{
               <br/>
               <section id='ratios'>
                 <div className="flex-row">
-                  <Typography variant='h4' color='primary'>
+                  <Typography variant='h5' color='primary'>
                     Ratios
-                    <Typography variant='body2' color='textSecondary'> Figures in Rs. Crores</Typography>
+                    <Typography variant='body2' color='textSecondary'>&nbsp;&nbsp;Figures in Rs. Crores</Typography>
                   </Typography>
                 </div>
                 <TableContainer component={Paper} className="responsive holder" data-result-table>
@@ -428,7 +432,7 @@ class Peer_comp extends Component{
                       
                       </StyledTableRow>
                       <StyledTableRow>
-                        <StyledTableCell>Debter Days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;w</StyledTableCell>
+                        <StyledTableCell>Debter Days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</StyledTableCell>
                         <StyledTableCell>{Math.round((this.state.data1.balance_statement['Receivables']/this.state.data1.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>
 
                         <StyledTableCell>{Math.round((this.state.data2.balance_statement['Receivables']/this.state.data2.income_statement['Revenue'])*365*10000)/100}</StyledTableCell>
@@ -444,82 +448,105 @@ class Peer_comp extends Component{
                 </TableContainer>
               </section>
             </div>
+          </Box>
+        ):(
+          this.state.print?(
+          //console.log(this.state),
+            <div>
+              <center>
+                <img src={Loading} alt="loading..." />
+              </center>
+            </div>
           ):(
-            this.state.print?(
-            //console.log(this.state),
-              <div>
-                <center>
-                  <img src={Loading} alt="loading..." />
-                </center>
-              </div>
-            ):(
-                (this.state.error1 || this.state.error2)?(
-                  <div>
+              (this.state.error1 || this.state.error2)?(
+                  <Box width="70%" bgcolor="" p={1} my={0.5} style={{marginLeft:'15%', marginRight:'15%'}}>
                     <Typography color='error' variant='h4' align='center'>Enter valid input!</Typography>
-                    <Typography variant='h4'>Check following details:</Typography>
-                    <ul className='collection'>
-                      <li className='collection-item'><Typography variant='h6'>Check whether the ticker symbol you have entered is valid or not</Typography></li>
-                      <li className='collection-item'><Typography variant='h6'>Check whether the year you have entered is valid or not!</Typography></li>
-                    </ul>
+                    <Typography variant='h5'>Check following details:</Typography>
+                    <List className='collection'>
+                      <ListItem className='collection-item'><Typography variant='h6'>Check whether the ticker symbol you have entered is valid or not!</Typography></ListItem>
+                      <ListItem className='collection-item'><Typography variant='h6'>Check whether the year you have entered is valid or not!</Typography></ListItem>
+                    </List>
                     <Typography variant='h6'>If you think this is a mistake then email us at <Typography color='primary' variant='caption' className='blue-text'>smap.help@gmail.com</Typography></Typography>
+                  </Box>
+              ):(
+                this.state.same?(
+                  <div>
+                      <br/>
+                      <Typography variant='h5' color='error' align='center'>Enter different symbols to compare different companies!</Typography>
                   </div>
                 ):(
-                  this.state.same?(
-                    <div>
-                        <Typography variant='h4' color='error' align='center'>Enter different symbols to compare different companies!</Typography>
-                    </div>
-                  ):(
-                    <div>
-                        <br/>
-                        <Typography align='center' variant='h5'>Access the Annual reports by just one click!</Typography>
-                    </div>
-                  )
+                  <div>
+                      <br/>
+                      <Typography align='center' variant='h5'>Access the Annual reports by just one click!</Typography>
+                  </div>
                 )
-            )
-            
+              )
+          )    
         )
 
         return(
-            <div className="peer-comp">
-                <Header/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <Typography align='center' color='primary' variant='h3'>
-                    Compare peers
-                </Typography>
-                <br/>
-                <form>
-                    <div className='form-row'>
-                        <div className='peer-detail'>
-                            <div className='form-group'>
-                                <label className='form-label'>Ticker symbol 1&nbsp;&nbsp;:</label>
-                                <input className='form-input' type='text' name='symbol1' onChange={this.handleChange} value={this.state.symbol1} />
-                            </div>
-                            <div className='form-group'>
-                                <label className='form-label'>Ticker symbol 2&nbsp;:</label>
-                                <input className='form-input' type='text' name='symbol2' onChange={this.handleChange} value={this.state.symbol2} />
-                            </div>
-                            <div className='form-group'>
-                                <label className='form-label'>
-                                    Year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
-                                </label>
-                                <input className='form-input' type='text' name='year' onChange={this.handleChange} value={this.state.year} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='form-row'>
-                        <center>
-                            <Button align='center' variant="contained" color="primary" type="submit" name="action" onClick={this.handleSubmit}>
-                                Submit
-                            </Button>
-                        </center>
-                    </div>
-                </form>
-                {dataDisplay}
-            </div>
+          <div className="peer-comp">
+            <Header/>
+            <Container component='main' maxWidth='xs'>
+              <CssBaseline/>
+              <Typography align='center' component='h1' variant='h5'>
+                  Peer Stock Comparison
+              </Typography>
+              <form noValidate>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="symbol1"
+                  label="Ticker Symbol 1"
+                  name="symbol1"
+                  autoComplete="symbol1"
+                  autoFocus
+                  value={this.state.symbol1} 
+                  onChange={this.handleChange}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="symbol2"
+                  label="Ticker Symbol 2"
+                  name="symbol2"
+                  autoComplete="symbol2"
+                  autoFocus
+                  value={this.state.symbol2} 
+                  onChange={this.handleChange}
+                />
+                <TextField
+                  variant='outlined'
+                  margin = 'normal'
+                  required
+                  fullWidth
+                  id='year'
+                  label = 'Year'
+                  name = 'year'
+                  autoComplete = 'year'
+                  autoFocus
+                  type='number'
+                  value={this.state.year}
+                  onChange = {this.handleChange}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  name='action'
+                  onClick={this.handleSubmit}
+                >
+                  Submit
+                </Button>
+              </form>
+            </Container>
+            {dataDisplay}
+          </div>
         );
     }
 }

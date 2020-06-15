@@ -10,8 +10,17 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
+import Image from '../../Images/Home_Background.jpg'
 
 const useStyles = makeStyles((theme) => ({
+  home :{
+    backgroundImage : `url(${Image})`,
+    position : "relative",
+    height: '900px',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover'
+  },
   root: {
     width: '100%',
     backgroundColor: theme.palette.background.paper,
@@ -24,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
   return (
-    <div>
+    <div className = {classes.home}>
     <Header/>
     <Box width="50%" bgcolor="" p={1} my={0.5} style={{marginLeft:'25%', marginRight:'25%',marginTop: '10%'}}>
       <Paper>
@@ -32,6 +41,7 @@ function Home() {
           <Link to='/reports'>
             <ListItem alignItems="flex-start">
               <ListItemText
+                style = {{color : '#0078d3'}}
                 primary="Annual Report"
                 secondary={
                   <React.Fragment>
@@ -45,6 +55,7 @@ function Home() {
           <Link to='/indicators'>
             <ListItem alignItems="flex-start">
               <ListItemText
+                style = {{color : '#0078d3'}}
                 primary="Technical Indicators"
                 secondary={
                   <React.Fragment>
@@ -58,6 +69,7 @@ function Home() {
           <Link to='/optsim'>
             <ListItem alignItems="flex-start">
               <ListItemText
+                style = {{color : '#0078d3'}}
                 primary="Option Simulator"
                 secondary={
                   <React.Fragment>
@@ -72,6 +84,7 @@ function Home() {
           <Link to='/peercomp'>
             <ListItem alignItems="flex-start">
               <ListItemText
+                style = {{color : '#0078d3'}}
                 primary="Peer Comparison"
                 secondary={
                   <React.Fragment>
@@ -86,6 +99,7 @@ function Home() {
           <Link to='/dcf'>
             <ListItem alignItems="flex-start">
               <ListItemText
+                style = {{color : '#0078d3'}}
                 primary="DCF and Stock Prediction"
                 secondary={
                   <React.Fragment>

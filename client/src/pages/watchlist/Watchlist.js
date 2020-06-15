@@ -9,6 +9,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { Container, CssBaseline, TextField } from '@material-ui/core';
+import axios from 'axios';
 
 const qs = require('querystring');
 
@@ -17,6 +19,7 @@ class Watchlist extends Component{
     constructor(props){
         super(props);
         this.state = {
+            loggedin : false,
             searched_stock: null,
             stock_list : [],
             quotes: []
@@ -24,7 +27,19 @@ class Watchlist extends Component{
     }
     
     componentDidMount(){
-
+        axios.get('/user')
+            .then(res => {
+                if(res.data.status==='OK'){
+                    this.setState({
+                        loggedin : true
+                    })
+                }
+                else{
+                    this.setState({
+                        loggedin : false
+                    })
+                }
+            })
         let self=this;
         fetch('/user/watchlist',{
             method : 'GET',
@@ -52,7 +67,7 @@ class Watchlist extends Component{
                 console.log(data)
                 self.setState({quotes : data})
             })
-        });
+        })
     }
 
     handleChange = (e) => {
@@ -134,6 +149,14 @@ class Watchlist extends Component{
 
     render(){
         let element = null;
+        if(!this.state.loggedin)
+        {
+            return(
+                <div>
+                    <Header/>
+                </div>
+            )
+        }
         if(this.state.stock_list.length===0)
         {
             element = (<center><br/><Typography variant='h6' style={{color:''}}>Watchlist is empty!</Typography></center>)
@@ -145,7 +168,7 @@ class Watchlist extends Component{
                 element = (
                     <div>
                         <br />
-                        <Typography align='center' variant='h5'>Your Watchlist</Typography>
+                        <Typography align='center' variant='h5'>My Watchlist</Typography>
                         <br/>
                         <TableContainer component={Paper}>
                             <Table aria-label='simple table'>
@@ -165,20 +188,20 @@ class Watchlist extends Component{
                                 </TableHead>
                                 <TableBody>
                                     {this.state.stock_list.map((inputField, index)=>(
-                                            <Fragment key={`${inputField}~${index}`}>
-                                                <TableRow>
-                                                    <TableCell >{inputField}<button name={inputField} onClick={this.handleRemove}>-</button></TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['open']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['high']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['low']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['price']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['volume']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['lastTradingDay']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['previousClose']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['change']}</TableCell>
-                                                    <TableCell align='center'>{this.state.quotes[index]['changePercent']}</TableCell>
-                                                </TableRow>
-                                            </Fragment>
+                                        <Fragment key={`${inputField}~${index}`}>
+                                            <TableRow>
+                                                <TableCell >{inputField}<button name={inputField} onClick={this.handleRemove}>-</button></TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['open']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['high']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['low']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['price']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['volume']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['lastTradingDay']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['previousClose']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['change']}</TableCell>
+                                                <TableCell align='center'>{this.state.quotes[index]['changePercent']}</TableCell>
+                                            </TableRow>
+                                        </Fragment>
                                         )
                                     )}
                                 </TableBody>
@@ -193,19 +216,34 @@ class Watchlist extends Component{
         return (
             <div>
                 <Header/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <form>
-                    <div className='ind-detail'>
-                        <label className='ind-label'>Ticker Symbol:</label>
-                        <input className='ind-input' type="text" onChange={this.handleChange} placeholder='Enter Value' name='searched_stock' id="stock_input"/>
-                    </div>
-                    <br/>
-                    <center><Button align='center' variant='contained' color='primary' onClick={this.handleAdd}>Add</Button></center>
-                </form>
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline/>
+                    <Typography align='center' variant='h5'>Watchlist</Typography>
+                    <form noValidate>
+                        <TextField
+                            variant = 'outlined'
+                            margin = 'normal'
+                            required
+                            fullWidth
+                            id="stock_input"
+                            label='Ticker Symbol'
+                            name = 'searched_stock'
+                            autoFocus
+                            type='text'
+                            onChange = {this.handleChange}
+                        >
+                        </TextField>
+                        <Button align='center' fullWidth variant='contained' color='primary' onClick={this.handleAdd}>Add</Button>
+                    </form>
+                    {/* <form>
+                        <div className='ind-detail'>
+                            <label className='ind-label'>Ticker Symbol:</label>
+                            <input className='ind-input' type="text" onChange={this.handleChange} placeholder='Enter Value' name='searched_stock' id="stock_input"/>
+                        </div>
+                        <br/>
+                        <center><Button align='center' variant='contained' color='primary' onClick={this.handleAdd}>Add</Button></center>
+                    </form> */}
+                </Container>
                 {element}
             </div>
         )
