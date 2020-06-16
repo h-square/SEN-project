@@ -13,6 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import './dcf.css'
+import { Container, CssBaseline, TextField, Box, List, ListItem } from '@material-ui/core';
 
 class Display extends Component {
 
@@ -44,39 +45,21 @@ class Display extends Component {
       print: true
     })
 
-/*    <div>
-    <center><h3>Discounted Cash Flow</h3></center>
-    <div className='row'>
-      <form className='col s12'>
-        <div className='row'>
-          <h5 className="blue-text center">Ticker Symbol</h5>
-          <div className=" input-field col offset-s4 s4">              
-            <input id='input_text' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
-          </div>
-        </div>
-        <center><button className="btn waves-effect waves-light" type="submit" name="action" onClick={this.handleSubmit}>
-            Submit
-        </button></center>
-      </form>
-    </div>
-    {dataDisplay}
-  </div>
-*/
-
-const axios = require('axios');
-var sym=this.state.symbol.toUpperCase()
-sym=sym.trim()
-var d = new Date();
-var year = d.getFullYear();
-var y1= year-2;
-var y2= year-3;
-var y3= year-4;
-var fcf1;
-var fcf2;
-var fcf3;
-var netdebt;
-var url='/api/report/'+sym+'-'+y1;
-axios.get(url)
+  const axios = require('axios');
+  var sym=this.state.symbol.toUpperCase()
+  sym=sym.trim()
+  console.log(sym)
+  var d = new Date();
+  var year = d.getFullYear();
+  var y1= year-2;
+  var y2= year-3;
+  var y3= year-4;
+  var fcf1;
+  var fcf2;
+  var fcf3;
+  var netdebt;
+  var url='/api/report/'+sym+'-'+y1;
+  axios.get(url)
     .then(res=>{
         var symb = res.data.symbol;
         fcf1=res.data.cash_statement['Free Cash Flow'];
@@ -159,7 +142,7 @@ axios.get(url)
                                     else{
                                       this.setState({
                                         symbol: '',
-                                        data: "DATA NOT AVAILABLE",
+                                        data: "Data Not Available",
                                         symb: symb,
                                         dcf: dcf,
                                         showData: true,
@@ -173,7 +156,7 @@ axios.get(url)
                                       symbol: '',
                                       dcf: dcf,
                                       symb: symb,
-                                      data: "DATA NOT AVAILABLE",
+                                      data: "Data Not Available",
                                       showData: true,
                                       error: true,
                                       print:false
@@ -243,7 +226,7 @@ axios.get(url)
 
     console.log(this.state);
     const dataDisplay=this.state.showData? (
-      <div className='container' id='content-area'>
+      <Box width="70%" bgcolor="" p={1} my={0.5} style={{marginLeft:'15%', marginRight:'15%'}}>
         <br/>
         <center><Typography variant ='h4' className='red lighten-2' color='error'>
           {this.state.symb}
@@ -252,9 +235,9 @@ axios.get(url)
         <br/>
         <section id='ratios'>
           <div className="flex-row">
-            <Typography variant='h4' color='primary'>
+            <Typography variant='h5' color='primary'>
               Result
-              <Typography variant='body2' color='textSecondary'> Figures in Rs.</Typography>
+              <Typography variant='body2' color='textSecondary'>&nbsp;&nbsp;Figures in Rs.</Typography>
             </Typography>
           </div>
           <TableContainer component={Paper} className="responsive holder" data-result-table>
@@ -279,7 +262,7 @@ axios.get(url)
             </Table>
           </TableContainer>
         </section>
-      </div>
+      </Box>
     ):(
       this.state.print?(
       //console.log(this.state),
@@ -290,19 +273,20 @@ axios.get(url)
         </div>
       ):(
           this.state.error?(
-            <div>
-            <Typography color='error' variant='h4' align='center'>Enter valid input!</Typography>
-            <Typography variant='h4'>Check following details:</Typography>
-            <ul className='collection'>
-              <li className='collection-item'><Typography variant='h6'>Check whether the ticker symbol you have entered is valid or not</Typography></li>
-            </ul>
-            <Typography variant='h6'>If you think this is a mistake then email us at <Typography color='primary' variant='caption' className='blue-text'>smap.help@gmail.com</Typography></Typography>
-          </div>
+            <Box width="70%" bgcolor="" p={1} my={0.5} style={{marginLeft:'15%', marginRight:'15%'}}>
+              <Typography color='error' variant='h4' align='center'>Enter valid input!</Typography>
+              <Typography variant='h5'>Check following details:</Typography>
+              <List className='collection'>
+                <ListItem className='collection-item'><Typography variant='h6'>Check whether the ticker symbol you have entered is valid or not!</Typography></ListItem>
+                <ListItem className='collection-item'><Typography variant='h6'>Check whether the year you have entered is valid or not!</Typography></ListItem>
+              </List>
+              <Typography variant='h6'>If you think this is a mistake then email us at <Typography color='primary' variant='caption' className='blue-text'>smap.help@gmail.com</Typography></Typography>
+            </Box>
           ):(
           
             <div>
             <br/>
-        <br/>
+            <br/>
               <Typography align='center' variant='h6'>Get DCF stock valuation in just one click!</Typography>
             </div>
           )
@@ -313,23 +297,31 @@ axios.get(url)
     return (
       <div class="dcf">
 				<Header/>
-				<br/>
         <br/>
-        <br/>
-        <br/>
-        <br/>
-        <Typography align='center' color='primary' variant='h5'>
-           Discounted Cash Flow (DCF) and
-        </Typography>
-        <Typography align='center' color='primary' variant='h5'>
-           Stock Prediction (using LSTM)
-        </Typography>
-      <br/>
-      <br/>
-      <br/>
-        <div className='row'>
-          <form>
-            <div className='form-row'>
+        <Container component='main' maxWidth = 'xs'>
+          <CssBaseline/>
+          <Typography align='center' color='primary' variant='h5'>
+            Discounted Cash Flow (DCF) and
+          </Typography>
+          <Typography align='center' color='primary' variant='h5'>
+            Stock Prediction (using LSTM)
+          </Typography>
+          <form noValidate>
+          <TextField
+            variant = 'outlined'
+            margin = 'normal'
+            required
+            fullWidth
+            id="symbol"
+            name='symbol'
+            label='Ticker Symbol'
+            autoFocus
+            type='text'
+            onChange = {this.handleChange}
+          >
+          </TextField>
+          <Button align='center' fullWidth variant='contained' color='primary' name='action' onClick={this.handleSubmit}>Submit</Button>
+            {/* <div className='form-row'>
               <div className='dcf-detail'>
                 <div className='form-group'>
                   <label className='form-label'>Ticker Symbol:</label>
@@ -341,10 +333,9 @@ axios.get(url)
             <center><Button align='center' variant="contained" color="primary" type="submit" name="action" onClick={this.handleSubmit}>
                 Submit
             </Button></center>
-            </div>
+            </div> */}
           </form>
-        </div>
-        <br/>
+        </Container>
         {dataDisplay}
       </div>
     )

@@ -12,9 +12,11 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import CommentIcon from '@material-ui/icons/Comment';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import StarIcon from '@material-ui/icons/Star';
+import Header from '../../Header';
 
 class Discussion extends Component{
     state={
+        loggedin : false,
         posts:[ ]
     }
     componentDidMount() {
@@ -25,6 +27,19 @@ class Discussion extends Component{
         //             posts: res.data
         //         })
         //     })
+        axios.get('/user')
+            .then(res => {
+                if(res.data.status==='OK'){
+                    this.setState({
+                        loggedin : true
+                    })
+                }
+                else{
+                    this.setState({
+                        loggedin : false
+                    })
+                }
+            })
         axios.get("/api/discussion/")
             .then(res=>{
                 //console.log(res);
@@ -34,6 +49,11 @@ class Discussion extends Component{
             })
     }
     render(){
+        if(!this.state.loggedin){
+            return(
+                <Header/>
+            )
+        }
         const {posts} = this.state
         const postList=posts.length ? (
             posts.map(post=>{
