@@ -13,7 +13,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import './dcf.css'
-import { Container, CssBaseline, TextField, Box, List, ListItem } from '@material-ui/core';
+import { TextField, Container, CssBaseline, Box, List, ListItem } from '@material-ui/core';
+
+var apikey= 'c4d3311a545abab430d7efbe34d0b4e6'; 
 
 class Display extends Component {
 
@@ -45,21 +47,20 @@ class Display extends Component {
       print: true
     })
 
-  const axios = require('axios');
-  var sym=this.state.symbol.toUpperCase()
-  sym=sym.trim()
-  console.log(sym)
-  var d = new Date();
-  var year = d.getFullYear();
-  var y1= year-2;
-  var y2= year-3;
-  var y3= year-4;
-  var fcf1;
-  var fcf2;
-  var fcf3;
-  var netdebt;
-  var url='/api/report/'+sym+'-'+y1;
-  axios.get(url)
+const axios = require('axios');
+var sym=this.state.symbol.toUpperCase()
+sym=sym.trim()
+var d = new Date();
+var year = d.getFullYear();
+var y1= year-2;
+var y2= year-3;
+var y3= year-4;
+var fcf1;
+var fcf2;
+var fcf3;
+var netdebt;
+var url='/api/report/'+sym+'-'+y1;
+axios.get(url)
     .then(res=>{
         var symb = res.data.symbol;
         fcf1=res.data.cash_statement['Free Cash Flow'];
@@ -116,7 +117,9 @@ class Display extends Component {
                         //console.log(sum,prtr,netdebt)
                         var totalpresentvalue=sum+prtr-netdebt;
                         //console.log(totalpresentvalue)
-                        var url='https://financialmodelingprep.com/api/v3/enterprise-value/'+sym;
+                        var url='https://cors-anywhere.herokuapp.com/https://financialmodelingprep.com/api/v3/enterprise-value/'+sym+'?apikey='+apikey;
+                        console.log(url);
+                        //var url='https://financialmodelingprep.com/api/v3/enterprise-value/AAPL?apikey=demo';
                         axios.get(url)
                             .then(res=>{
                                 //console.log(res.data);
@@ -125,7 +128,9 @@ class Display extends Component {
                                 //console.log(num);
                                 //console.log(totalpresentvalue,totalshares);
                                 var dcf=totalpresentvalue/num;
-                                axios.get(`https://cors-anywhere.herokuapp.com/http://still-brushlands-16837.herokuapp.com/todo/${sym}`)
+                                dcf = Math.round((dcf+Number.EPSILON)*100)/100 ;
+                                //axios.get(`https://cors-anywhere.herokuapp.com/http://still-brushlands-16837.herokuapp.com/todo/${sym}`)
+                                axios.get(`https://cors-anywhere.herokuapp.com/https://stock-lstm.herokuapp.com/todo/${sym}`)  
                                   .then(res => {
                                     console.log(res.data);
                                     if(res.data){
@@ -175,10 +180,10 @@ class Display extends Component {
         if(res.data.status==='OK'){
           this.setState({
             symbol: '',
-            showData: true,
+            showData: false,
             dcf:'',
             error: false,
-            print: false
+            print: true
           })
         }
         else{
@@ -227,7 +232,6 @@ class Display extends Component {
     console.log(this.state);
     const dataDisplay=this.state.showData? (
       <Box width="70%" bgcolor="" p={1} my={0.5} style={{marginLeft:'15%', marginRight:'15%'}}>
-        <br/>
         <center><Typography variant ='h4' className='red lighten-2' color='error'>
           {this.state.symb}
         </Typography></center>
@@ -235,9 +239,9 @@ class Display extends Component {
         <br/>
         <section id='ratios'>
           <div className="flex-row">
-            <Typography variant='h5' color='primary'>
+            <Typography variant='h4' color='primary'>
               Result
-              <Typography variant='body2' color='textSecondary'>&nbsp;&nbsp;Figures in Rs.</Typography>
+              <Typography variant='body2' color='textSecondary'> Figures in Rs.</Typography>
             </Typography>
           </div>
           <TableContainer component={Paper} className="responsive holder" data-result-table>
@@ -252,7 +256,7 @@ class Display extends Component {
               <TableBody>
                 <StyledTableRow>
                   <StyledTableCell>DCF stock valuation</StyledTableCell>
-                  <StyledTableCell>Rs. {Math.round((this.state.dcf+Number.EPSILON)*100)/100}</StyledTableCell>
+                  <StyledTableCell>Rs. {this.state.dcf}</StyledTableCell>
                 </StyledTableRow>
                 <StyledTableRow>
                   <StyledTableCell>Stock Price Prediction (using LSTM)</StyledTableCell>
@@ -283,10 +287,9 @@ class Display extends Component {
               <Typography variant='h6'>If you think this is a mistake then email us at <Typography color='primary' variant='caption' className='blue-text'>smap.help@gmail.com</Typography></Typography>
             </Box>
           ):(
-          
             <div>
             <br/>
-            <br/>
+        <br/>
               <Typography align='center' variant='h6'>Get DCF stock valuation in just one click!</Typography>
             </div>
           )
@@ -298,13 +301,13 @@ class Display extends Component {
       <div class="dcf">
 				<Header/>
         <br/>
-        <Container component='main' maxWidth = 'xs'>
+        <Container component='main' maxWidth='xs'>
           <CssBaseline/>
           <Typography align='center' color='primary' variant='h5'>
-            Discounted Cash Flow (DCF) and
+              Discounted Cash Flow (DCF) and
           </Typography>
           <Typography align='center' color='primary' variant='h5'>
-            Stock Prediction (using LSTM)
+              Stock Prediction (using LSTM)
           </Typography>
           <form noValidate>
           <TextField
@@ -318,24 +321,26 @@ class Display extends Component {
             autoFocus
             type='text'
             onChange = {this.handleChange}
+            value={this.state.symbol}
           >
           </TextField>
-          <Button align='center' fullWidth variant='contained' color='primary' name='action' onClick={this.handleSubmit}>Submit</Button>
-            {/* <div className='form-row'>
-              <div className='dcf-detail'>
-                <div className='form-group'>
-                  <label className='form-label'>Ticker Symbol:</label>
-                  <input className='form-input' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
+          <Button align='center' fullWidth variant='contained' color='primary' name='action' type='submit' onClick={this.handleSubmit}>Submit</Button>
+              {/* <div className='form-row'>
+                <div className='dcf-detail'>
+                  <div className='form-group'>
+                    <label className='form-label'>Ticker Symbol:</label>
+                    <input className='form-input' type='text' name='symbol' onChange={this.handleChange} value={this.state.symbol} />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className='form-row'>
-            <center><Button align='center' variant="contained" color="primary" type="submit" name="action" onClick={this.handleSubmit}>
-                Submit
-            </Button></center>
-            </div> */}
+              <div className='form-row'>
+              <center><Button align='center' variant="contained" color="primary" type="submit" name="action" onClick={this.handleSubmit}>
+                  Submit
+              </Button></center>
+              </div> */}
           </form>
         </Container>
+        <br/>
         {dataDisplay}
       </div>
     )
