@@ -1,4 +1,0 @@
-const blogCount = { 
- count = 500001 
- }; 
- module.exports = blogCount

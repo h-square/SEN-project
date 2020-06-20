@@ -66,7 +66,7 @@ app.use('/api/discussion', require('./routes/api/DiscussionPortal/discussion_por
 app.use('/api/discussion/find', require('./routes/api/DiscussionPortal/blog'));
 
 // blog
-app.use('/user/blog', require('./routes/user/blog'));
+app.use('/user/blog', protect ,require('./routes/user/blog'));
 
 // start listening
 const PORT = process.env.PORT || config.servPort;
