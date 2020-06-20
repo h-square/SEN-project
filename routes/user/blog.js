@@ -21,7 +21,7 @@ const get_date = () => {
 
 const getBlogID = () => {
 	blogCount.count = blogCount.count+1;
-	fs.writeFileSync('./routes/user/blog-count.js', `const blogCount = \{ \n count : ${blogCount.count} \n \}\; \n module.exports = blogCount`);
+	fs.writeFileSync('./routes/user/blog-count.js', `const blogCount = \{ \n count : ${blogCount.count} \n \}\; \n module.exports = blogCount\;\n`);
 	return `${blogCount.count}`;
 };
 
