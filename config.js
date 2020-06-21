@@ -11,7 +11,9 @@ const config = {
     "earliestYear": 2018,
     "statusCodes": {
         "ok": "OK",
-        "failed": "FAILED"
+        "failed": "FAILED",
+        "notfound": "NOTFOUND",
+        "unauthorised": "UNAUTHORISED"
     },
     "errorCodes": {
         "api": "APIERROR",

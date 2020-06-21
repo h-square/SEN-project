@@ -65,6 +65,9 @@ app.use('/user/shareportfolio', require('./routes/user/portfolio/grantShareReque
 app.use('/api/discussion', require('./routes/api/DiscussionPortal/discussion_portal'));
 app.use('/api/discussion/find', require('./routes/api/DiscussionPortal/blog'));
 
+// blog
+app.use('/user/blog', protect ,require('./routes/user/blog'));
+
 // start listening
 const PORT = process.env.PORT || config.servPort;
 
