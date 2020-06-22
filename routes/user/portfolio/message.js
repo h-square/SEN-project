@@ -8,11 +8,11 @@ module.exports = {
         <p> 
         One of our user i.e. <b>${reqFrom}</b> has a sharing-request 
         for your portfolio named <b>${portfolioName}</b>. <br>
-        To grant access, please click on this <b><a href="${LINK}">LINK</a></b> <br> 
+        To grant access, click on this <b><a href="${LINK}">LINK</a></b> <br> 
         </p>
         
         <p>
-        <i> Please do not reply to this mail.</i> <br>
+        <i> Do not reply to this mail.</i> <br>
         </p>
 
         <p>
@@ -30,12 +30,12 @@ module.exports = {
 
         <p>
         <i>Greetings from SMAP.</i> <br>
-        Fortunately, <b>${reqTo}</b> has granted your share-request to 
+        <b>${reqTo}</b> has granted your share-request to 
         the portfolio named <b>${portfolioName}</b>. <br>
         </p>
 
         <p>
-        <i> Please do not reply to this mail.</i> <br>
+        <i> Do not reply to this mail.</i> <br>
         </p>
 
         <p>

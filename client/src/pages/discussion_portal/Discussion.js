@@ -40,14 +40,15 @@ class Discussion extends Component{
                     })
                 }
             })
-        axios.get("/api/discussion/")
+        axios.get("/user/blog/")
             .then(res=>{
-                //console.log(res);
+                console.log(res);
                 this.setState({
                     posts:res.data.blogs
                 })
             })
     }
+
     render(){
         if(!this.state.loggedin){
             return(
@@ -57,26 +58,30 @@ class Discussion extends Component{
         const {posts} = this.state
         const postList=posts.length ? (
             posts.map(post=>{
-                console.log(post)
+                //console.log(post)
                 return(
                     <div className="blogs" key={post.id}>
                         <Box width="50%" bgcolor="" p={1} my={0.5} style={{marginLeft:'20%'}}>
                             <Paper variant="outlined" style={{ marginTop: '10px', paddingLeft: '10px', paddingRight: '10px', paddingBottom: '10px'}}>
                                 <a href={'/discussion/post/'+post.id}>
-                                    <Typography variant="h5" style={{color: '#3399FF'}}>{post.blog.title}</Typography>
+                                    <Typography variant="h5" style={{color: '#3399FF'}}>{post.title}</Typography>
                                 </a>
-                                <Typography variant="caption">By: {post.blog.user}, Published at: {post.blog.publishDate}</Typography>
+                                <Typography variant="caption">By: {post.authorName}, Published At: {post.publishDate}</Typography>
                                 <br/>
-                                <Typography>{post.blog.article}&nbsp;<a href={'/discussion/find/'+post.id}>read more...</a></Typography>
+                                <Typography>{post.article}&nbsp;<a href={'/discussion/post/'+post.id}>read more...</a></Typography>
                                 <div className="like-share-comment-bookmark">
+                                    <a href={'/discussion/post/' + post.id}>
                                     <IconButton>
                                         <ThumbUpAltOutlinedIcon/>
                                     </IconButton>
-                                    <p style={{marginTop: '2%'}}>Likes</p>
+                                    </a>
+                                    <p style={{marginTop: '2%', marginRight: '5%'}}>{post.upvoteList.length} Likes</p>
+                                    <a href={'/discussion/post/' + post.id}>
                                     <IconButton>
                                         <CommentIcon/>
                                     </IconButton>
-                                    <p style={{marginTop: '2%'}}>Comments</p>
+                                    </a>
+                                    <p style={{marginTop: '2%', marginRight: '5%'}}>{post.commentList.length} Comments</p>
                                     <IconButton>
                                         <StarBorderOutlinedIcon/>
                                     </IconButton>

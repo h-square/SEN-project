@@ -62,8 +62,8 @@ app.use('/user/portfolio/requests', protect, require('./routes/user/portfolio/sh
 app.use('/user/shareportfolio', require('./routes/user/portfolio/grantShareRequest'));
 
 //Discussion Portal
-app.use('/api/discussion', require('./routes/api/DiscussionPortal/discussion_portal'));
-app.use('/api/discussion/find', require('./routes/api/DiscussionPortal/blog'));
+// app.use('/api/discussion', require('./routes/api/DiscussionPortal/discussion_portal'));
+// app.use('/api/discussion/find', require('./routes/api/DiscussionPortal/blog'));
 
 // blog
 app.use('/user/blog', protect ,require('./routes/user/blog'));
