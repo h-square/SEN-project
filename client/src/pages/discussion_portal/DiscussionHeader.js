@@ -35,21 +35,27 @@ class DiscussionHeader extends Component{
                             justify="space-between"
                             container
                             spacing={4}>
+                                
                             <Grid item>
                             </Grid>
                             
                             <Grid item style={{ padding: '0px' ,  marginRight: '15px'}}>
-                                <IconButton aria-label="show 17 new notifications" color="inherit">
+                                {/* <IconButton aria-label="show 17 new notifications" color="inherit">
                                     <Badge color="secondary">
                                         <NotificationsIcon />
                                     </Badge>
                                 </IconButton>
+
                                 <IconButton
                                     edge="end"
                                     aria-label="account of current user"
                                     color="inherit">
                                     <AccountCircle />
-                                </IconButton>
+                                </IconButton> */}
+
+                                <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
+                                  <a href='/logout'><Typography variant='h5' style={{color:'#0078d3'}}>Logout</Typography></a>
+                                </Button>
                             </Grid>
                         </Grid>
                     </Toolbar>

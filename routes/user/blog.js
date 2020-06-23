@@ -121,7 +121,7 @@ router.post('/create', (req, res) =>{
 		...newBlog,
 		status: config.statusCodes.ok,
 		id: blogID,
-		upvoted: newBlog.commentList.includes(req.user.email),
+		upvoted: newBlog.upvoteList.includes(req.user.email),
 	});
 });
 
@@ -145,7 +145,7 @@ router.post('/update/:blogID', (req, res) =>{
 					status: config.statusCodes.ok,
 					id: req.params.blogID,
 					...updatedBlog,
-					upvoted: updateBlog.commentList.includes(req.user.email),
+					upvoted: updateBlog.upvoteList.includes(req.user.email),
 				});
 			}
 			else{
@@ -173,7 +173,7 @@ router.post('/addUpvote/:blogID', (req, res) => {
 				...restBlog,
 				status: config.statusCodes.ok,
 				id: req.params.blogID,
-				upvoted: restBlog.commentList.includes(req.user.email),
+				upvoted: restBlog.upvoteList.includes(req.user.email),
 			});
 		}
 	});
@@ -194,7 +194,7 @@ router.post('/removeUpvote/:blogID', (req, res) => {
 				...restBlog,
 				status: config.statusCodes.ok,
 				id: req.params.blogID,
-				upvoted: restBlog.commentList.includes(req.user.email),
+				upvoted: restBlog.upvoteList.includes(req.user.email),
 			});
 		}
 	});
@@ -221,7 +221,7 @@ router.post('/addComment/:blogID', (req,res) =>{
 				...restBlog,
 				status: config.statusCodes.ok,
 				id: req.params.blogID,
-				upvoted: restBlog.commentList.includes(req.user.email),
+				upvoted: restBlog.upvoteList.includes(req.user.email),
 			});
 		}
 	});
@@ -247,7 +247,7 @@ router.post('/updateComment/:blogID/:commentID', (req, res) =>{
 					...restBlog,
 					status: config.statusCodes.ok,
 					id: req.params.blogID,
-					upvoted: restBlog.commentList.includes(req.user.email),
+					upvoted: restBlog.upvoteList.includes(req.user.email),
 				});
 			}
 			else{
@@ -275,7 +275,7 @@ router.post('/deleteComment/:blogID/:commentID', (req, res) =>{
 					...restBlog,
 					status: config.statusCodes.ok,
 					id: req.params.blogID,
-					upvoted: restBlog.commentList.includes(req.user.email),
+					upvoted: restBlog.upvoteList.includes(req.user.email),
 				});
 			}
 			else{
