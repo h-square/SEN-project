@@ -14,6 +14,8 @@ import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import StarIcon from '@material-ui/icons/Star';
 import Header from '../../Header';
 
+import Loading from '../../Images/Loading.gif'
+
 class Discussion extends Component{
     state={
         loggedin : false,
@@ -68,23 +70,24 @@ class Discussion extends Component{
                                 </a>
                                 <Typography variant="caption">By: {post.authorName}, Published At: {post.publishDate}</Typography>
                                 <br/>
-                                <Typography>{post.article}&nbsp;<a href={'/discussion/post/'+post.id}>read more...</a></Typography>
+                                <Typography style={{marginTop:'5px'}}>{post.article}&nbsp;<a href={'/discussion/post/'+post.id}>read more...</a></Typography>
                                 <div className="like-share-comment-bookmark">
                                     <a href={'/discussion/post/' + post.id}>
-                                    <IconButton>
-                                        <ThumbUpAltOutlinedIcon/>
-                                    </IconButton>
-                                    </a>
+                                        <IconButton>
+                                            <ThumbUpAltOutlinedIcon/>
+                                        </IconButton>
+                                        </a>
                                     <p style={{marginTop: '2%', marginRight: '5%'}}>{post.upvoteList.length} Likes</p>
+
                                     <a href={'/discussion/post/' + post.id}>
-                                    <IconButton>
-                                        <CommentIcon/>
-                                    </IconButton>
+                                        <IconButton>
+                                            <CommentIcon/>
+                                        </IconButton>
                                     </a>
                                     <p style={{marginTop: '2%', marginRight: '5%'}}>{post.commentList.length} Comments</p>
-                                    <IconButton>
+                                    {/* <IconButton>
                                         <StarBorderOutlinedIcon/>
-                                    </IconButton>
+                                    </IconButton> */}
                                 </div>
                             </Paper>
                         </Box>
@@ -92,7 +95,11 @@ class Discussion extends Component{
                 )
             })
         ) : (
-            <div className="center">No posts yet!</div>
+            <div>
+                <center>
+                    <img src={Loading} alt="loading..." />
+                </center>
+            </div>
         )
         return(
             <div className='container'>

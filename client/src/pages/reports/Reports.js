@@ -19,8 +19,16 @@ import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { ListItem, List } from '@material-ui/core';
+//import Image from '../../Images/graph-background.jpg'
 
 const useStyles = makeStyles((theme) => ({
+  home : {
+    // backgroundImage : `url(${Image})`,
+    // position : "relative",
+    // minHeight:'900px',
+    // backgroundPosition: 'center',
+    // backgroundSize: 'cover'
+  },
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -347,7 +355,7 @@ function Reports(){
   
   )
   return(
-    <div>
+    <div className={classes.home}>
       <Header/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

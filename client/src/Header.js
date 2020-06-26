@@ -64,20 +64,28 @@ class Header extends Component{
                     
                     <Grid item style={{ padding: '0px' ,  marginRight: '15px'}}>
                         {this.state.login==='0'? (
-                            <Button variant="outlined" style={{marginLeft:'50px', textTransform: 'none'}}>
+                            <div>
+                            <Button style={{marginLeft:'50px', textTransform: 'none'}}>
+                              <a href='/aboutus'><Typography variant='h5' style={{color: colors.BASE_BLUE}}>About Us</Typography></a>
+                            </Button>
+                            <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
                               <a href='/login'><Typography variant='h5' style={{color: colors.BASE_BLUE}}>Sign In / Up</Typography></a>
                             </Button>
+                            </div>
                           ) : (
                             this.state.login==='-1'?(null):(
                               <div>
                                 <Button style={{marginLeft:'50px', textTransform: 'none'}}>
                                   <a><Typography variant='h5' style={{color: colors.BASE_BLUE}}>{this.state.username}</Typography></a>
                                 </Button>
-                                <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
+                                <Button style={{marginLeft:'15px', textTransform: 'none'}}>
                                   <a href='/discussion/feed'><Typography variant='h5' style={{color: colors.BASE_BLUE}}>Discussion</Typography></a>
                                 </Button>
-                                <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
+                                <Button style={{marginLeft:'15px', textTransform: 'none'}}>
                                   <a href='/watchlist'><Typography variant='h5' style={{color: colors.BASE_BLUE}}>Watchlist</Typography></a>
+                                </Button>
+                                <Button style={{marginLeft:'15px', textTransform: 'none'}}>
+                                  <a href='/aboutus'><Typography variant='h5' style={{color: colors.BASE_BLUE}}>About Us</Typography></a>
                                 </Button>
                                 <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
                                   <a href='/logout'><Typography variant='h5' style={{color: colors.BASE_BLUE}}>Logout</Typography></a>
