@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import axios from 'axios';
 
 const colors ={
     BASE_BLUE: '#0078d3',
@@ -14,6 +15,40 @@ const colors ={
 }
 
 class DiscussionHeader extends Component{
+
+    constructor() {
+        super();
+        this.state = {
+            username : '',
+            login : '-1'
+        }
+    }
+
+    componentDidMount(){
+        axios.get('/user')
+            .then(res=>{
+                //console.log(res);
+                if(res.data.status==='OK'){
+                this.setState({
+                    username : res.data.user.name,
+                    login : '1'
+                })
+                }
+                else{
+                this.setState({
+                    username : '',
+                    login : '0'
+                })
+                }
+            })
+            .catch(err=>{
+                this.setState({
+                username : '',
+                login : '0'
+                })
+            })
+    }
+
     render(){
         return(
             <React.Fragment>
@@ -22,15 +57,15 @@ class DiscussionHeader extends Component{
                         <Button style={{textTransform: 'none'}}>
                             <a href="/"><Typography variant="h5" style={{color: colors.BASE_BLUE}}>SMAP</Typography></a>
                         </Button>
-                        <Button variant="outlined" style={{marginLeft:'50px', textTransform: 'none'}}>
+                        <Button variant="text" style={{marginLeft:'50px', textTransform: 'none'}}>
                             <a href="/discussion/feed"><Typography variant="h5" style={{color: colors.BASE_BLUE}}>Feed</Typography></a>
                         </Button>
-                        <Button variant="outlined" style={{marginLeft:'20px', textTransform: 'none'}}>
-                            <a href="/discussion/blog"><Typography variant="h5" style={{color: colors.BASE_BLUE}}>Blog</Typography></a>
+                        <Button variant="text" style={{marginLeft:'20px', textTransform: 'none'}}>
+                            <a href="/discussion/userblogs"><Typography variant="h5" style={{color: colors.BASE_BLUE}}>Blogs</Typography></a>
                         </Button>
-                        <Button variant="outlined" style={{marginLeft:'20px', textTransform: 'none'}}>
+                        {/* <Button variant="text" style={{marginLeft:'20px', textTransform: 'none'}}>
                             <a href="/discussion/starred"><Typography variant="h5" style={{color: colors.BASE_BLUE}}>Starred</Typography></a>
-                        </Button>
+                        </Button> */}
                         <Grid
                             justify="space-between"
                             container
@@ -40,22 +75,24 @@ class DiscussionHeader extends Component{
                             </Grid>
                             
                             <Grid item style={{ padding: '0px' ,  marginRight: '15px'}}>
-                                {/* <IconButton aria-label="show 17 new notifications" color="inherit">
-                                    <Badge color="secondary">
-                                        <NotificationsIcon />
-                                    </Badge>
-                                </IconButton>
-
-                                <IconButton
-                                    edge="end"
-                                    aria-label="account of current user"
-                                    color="inherit">
-                                    <AccountCircle />
-                                </IconButton> */}
-
-                                <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
-                                  <a href='/logout'><Typography variant='h5' style={{color:'#0078d3'}}>Logout</Typography></a>
-                                </Button>
+                                {this.state.login==='-1'?(null):(
+                                    this.state.login==='0'?(
+                                        <div>
+                                            <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
+                                                <a href='/login'><Typography variant='h5' style={{color:'#0078d3'}}>Sign In / Up</Typography></a>
+                                            </Button>
+                                        </div>
+                                    ):(
+                                        <div>
+                                            <Button style={{marginLeft:'50px', textTransform: 'none'}}>
+                                                <a><Typography variant='h5' style={{color: colors.BASE_BLUE}}>{this.state.username}</Typography></a>
+                                            </Button>
+                                            <Button variant="outlined" style={{marginLeft:'15px', textTransform: 'none'}}>
+                                                <a href='/logout'><Typography variant='h5' style={{color:'#0078d3'}}>Logout</Typography></a>
+                                            </Button>
+                                        </div>
+                                    )
+                                )}
                             </Grid>
                         </Grid>
                     </Toolbar>

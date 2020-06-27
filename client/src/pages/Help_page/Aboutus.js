@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import Header from '../../Header';
-import './Support.css'
-class Support extends Component {
+import './Aboutus.css'
+class Aboutus extends Component {
   render() {
     return (
       <div className="App">
         <body class="Support">
           <Header/>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
           <h1 class="support-header" style={{color : "black"}} > Purpose of the website </h1>
           <hr width="35%" class="ruler"></hr>
           <br/>
@@ -75,4 +70,4 @@ class Support extends Component {
     );
   }
 }
-export default Support;
+export default Aboutus;

@@ -3,6 +3,7 @@ import axios from 'axios'
 import DiscussionHeader from './DiscussionHeader'
 import './Discussion'
 import {Link} from 'react-router-dom'
+import { useHistory } from "react-router-dom";
 
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Typography, Box, IconButton, TextField, Button, Modal } from '@material-ui/core'
@@ -11,6 +12,10 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import CommentIcon from '@material-ui/icons/Comment';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import StarIcon from '@material-ui/icons/Star';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 const qs = require('querystring');
 
@@ -28,7 +33,7 @@ function getModalStyle() {
 const useStyles = makeStyles((theme) => ({
     paper: {
     position: 'absolute',
-    width: 400,
+    width: 800,
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
@@ -51,6 +56,7 @@ const Post = (props) => {
     const [open,setOpen] = useState(false);
     
     const id = props.match.params.post_id
+    const history = useHistory();
 
     useEffect(()=>{
         //console.log(this.props)
@@ -174,7 +180,7 @@ const Post = (props) => {
                 credentials : 'include'
             })
             .then(res=>{
-                console.log(res);
+                //console.log(res);
             })
             .catch(err=>{
                 console.log(err);
@@ -183,15 +189,50 @@ const Post = (props) => {
         }
     }
 
+    function handleDeletePost(e){
+        e.preventDefault();
+        let id = props.match.params.post_id
+        //console.log(id)
+        fetch('/user/blog/delete/' + id, {
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            credentials : 'include'
+        })
+        .then(res=>{
+            console.log(res);
+            history.push('/discussion/feed')
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
+
     const displayPost = post ? (
         <div className="post">
             <DiscussionHeader/>
             <Box width="65%" bgcolor="" p={1} my={0.5} style={{marginLeft:'10%'}}>
                 <Paper variant="outlined" style={{ marginTop: '10px', paddingLeft: '10px', paddingRight: '10px', paddingBottom: '10px'}}>
-                    <Typography variant="h5" style={{color: '#3399FF'}}>{post.title}</Typography>
+                    <div className='same-row'>
+                        <Typography variant="h5" style={{color: '#3399FF'}}>{post.title}</Typography>
+                        {(post.author === email)? (
+                            <PopupState variant="popover" popupId="demo-popup-menu">
+                            {(popupState) => (
+                                <React.Fragment>
+                                    <MoreVertIcon align='right' {...bindTrigger(popupState)} style={{marginTop:'4px'}}/>
+                                    <Menu {...bindMenu(popupState)}>
+                                    <MenuItem onClick={handleDeletePost}>Delete Blog</MenuItem>
+                                    </Menu>
+                                </React.Fragment>
+                            )}
+                            </PopupState>
+                        ) : (
+                            null
+                        )}
+                    </div>
                     <Typography variant="caption">By: {post.authorName}, Published At: {post.publishDate}</Typography>
-                    <br/>
-                    <Typography align='justify'>{post.article}</Typography>
+                    <Typography align='justify' style={{marginTop : '20px'}}>{post.article}</Typography>
                     <div className="like-share-comment-bookmark">
                         <IconButton onClick={handleUpvote}>
                             {upvote?(
@@ -201,9 +242,9 @@ const Post = (props) => {
                             )}
                         </IconButton>
                         <p style={{marginTop: '15px'}}>{post.upvoteList.length} Upvote</p>
-                        <IconButton style={{marginLeft : '5%'}}>
+                        {/* <IconButton style={{marginLeft : '5%'}}>
                             <StarBorderOutlinedIcon/>
-                        </IconButton>
+                        </IconButton> */}
                     </div>
                 </Paper>
                 {/* <div className='same-row'>
@@ -225,6 +266,7 @@ const Post = (props) => {
                 margin = 'normal'
                 autoFocus
                 fullWidth
+                multiline
                 value = {editComment}
                 onChange = {handleEditComment}
             />

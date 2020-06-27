@@ -288,7 +288,7 @@ router.post('/deleteComment/:blogID/:commentID', (req, res) =>{
 	});
 });
 
-router.delete('/delete/:blogID', (req,res) => {
+router.post('/delete/:blogID', (req,res) => {
 	retrieveBlog(req.params.blogID).then( blog => {
 		if( blog.status !== config.statusCodes.ok ){
 			res.json(blog);
