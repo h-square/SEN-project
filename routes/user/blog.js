@@ -50,7 +50,7 @@ const retrieveBlog = async (blogID) => {
 };
 
 const updateBlog = (blogID, blog) => {
-	console.log(blogID);
+	//console.log(blogID);
 	blogRef.doc(blogID).set(blog);
 };
 
@@ -269,7 +269,8 @@ router.post('/deleteComment/:blogID/:commentID', (req, res) =>{
 			let {status, id, ...restBlog} = blog;
 			commentID = parseInt(req.params.commentID);
 			if( commentID >= 0 && commentID < restBlog.commentList.length && restBlog.commentList[commentID].author === req.user.email ){
-				restBlog.commentList.splice(commentID);
+				restBlog.commentList[commentID].comment = "Content has been withdrawn by the author";
+				restBlog.commentList[commentID].author = "~~deleted~~";
 				updateBlog(req.params.blogID, restBlog);
 				res.json({
 					...restBlog,
