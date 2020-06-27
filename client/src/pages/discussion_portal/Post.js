@@ -146,7 +146,7 @@ const Post = (props) => {
                 credentials : 'include'
             })
             .then(res=>{
-                console.log(res);
+                //console.log(res);
             })
             .catch(err=>{
                 console.log(err);

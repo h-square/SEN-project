@@ -269,8 +269,7 @@ router.post('/deleteComment/:blogID/:commentID', (req, res) =>{
 			let {status, id, ...restBlog} = blog;
 			commentID = parseInt(req.params.commentID);
 			if( commentID >= 0 && commentID < restBlog.commentList.length && restBlog.commentList[commentID].author === req.user.email ){
-				restBlog.commentList[commentID].comment = "Content has been withdrawn by the author";
-				restBlog.commentList[commentID].author = "~~deleted~~";
+				restBlog.commentList.splice(commentID,1);
 				updateBlog(req.params.blogID, restBlog);
 				res.json({
 					...restBlog,
